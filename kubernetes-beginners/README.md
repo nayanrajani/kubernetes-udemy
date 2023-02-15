@@ -75,3 +75,45 @@
     - it will print the token, just copy and paste in the worker nodes
   - now to check the nodes have joined or not, run below command in master
     - kubectl get nodes
+
+### POds
+
+- Before we head into understanding PODs, we would like to assume that the following have been setup already. At this point, we assume that the application is already developed and built into Docker Images and it is availalble on a Docker repository like Docker hub, so kubernetes can pull it down. We also assume that the Kubernetes cluster has already been setup and is working. This could be a single-node setup or a multi-node setup, doesn’t matter. All the services need to be in a running state.
+
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/
+- https://kubernetes.io/docs/concepts/
+
+- Master-node
+  - kubectl run nginx --image=nginx
+  - kubectl get pods
+  - kubectl describe nginx
+  - kubectl describe pods nginx
+  - kubectl get pods -o wide
+
+### YAML
+
+- ![image](https://user-images.githubusercontent.com/57224583/219025362-896bd1f4-3d43-4a3d-9f6b-5c2569148d96.png)
+
+- YAML file is used to represent the DATA, the configuration DATA
+
+- ![image](https://user-images.githubusercontent.com/57224583/219025991-c6dd7f31-7ce5-4aea-b79f-f44d3f601192.png)
+
+- ![image](https://user-images.githubusercontent.com/57224583/219026343-ece6ccfc-3962-4d7a-b182-b1f0dc0bf316.png)
+
+- ![image](https://user-images.githubusercontent.com/57224583/219026468-74fa76a3-b8ca-4330-8091-ce6182dd1964.png)
+
+- When to use:
+
+  - Dictionaries
+
+    - ![image](https://user-images.githubusercontent.com/57224583/219026848-f1031c47-3509-414e-9a1f-fe7ebdbf049d.png)
+
+  - List
+
+    - ![image](https://user-images.githubusercontent.com/57224583/219027275-1757e7b2-92aa-4272-a498-533191d67115.png)
+
+  - List of Dictionaries
+    - ![image](https://user-images.githubusercontent.com/57224583/219027150-6094938e-5448-43f5-8a5c-b68412ac9fae.png)
+
+- Notes:
+  - ![image](https://user-images.githubusercontent.com/57224583/219027639-877c7151-20a4-4736-88cd-2d41339f780c.png)
