@@ -57,8 +57,21 @@
 ## Kubernetes Setup
 
 - Master node
-  - Run this below command
-  -
+
+  - Run this below commands
+    - sudo wget https://raw.githubusercontent.com/nayanrajani/kubernetes-udemy/main/kubernetes-beginners/master-node-setup.sh
+    - sudo chmod 755 master-node-setup.sh
+    - sudo bash master-node-setup.sh
+
 - Worker node
+
   - Run this below command
-  -
+    - sudo wget https://raw.githubusercontent.com/nayanrajani/kubernetes-udemy/main/kubernetes-beginners/worker-node-setup.sh
+    - sudo chmod 755 worker-node-setup.sh
+    - sudo bash worker-node-setup.sh
+
+- after this above commands, run this below command in master to generate the token that can be pasted in worker node to join the cluster
+  - sudo kubeadm token create --print-join-command
+    - it will print the token, just copy and paste in the worker nodes
+  - now to check the nodes have joined or not, run below command in master
+    - kubectl get nodes
