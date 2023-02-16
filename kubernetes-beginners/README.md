@@ -155,3 +155,27 @@
   creating.
 
   - ![20230216_133412](https://user-images.githubusercontent.com/57224583/219306005-a3b3c18b-d0d3-4540-8456-11885f7a78e5.jpg)
+
+### Demo
+
+- vi pod.yaml
+  #(you need to format this below code with similar to image)
+  apiVersion: v1
+  kind: Pod
+  metadata:
+  name: nginx
+  labels:
+  app: nginx
+  tier: frontend
+  spec:
+  containers:
+
+  - name: nginx
+    image: nginx
+
+  - ![20230216_140608](https://user-images.githubusercontent.com/57224583/219311648-46f9e264-7180-4f66-9428-500f7a30e2cc.jpg)
+
+- cat pod.yaml
+- kubectl apply -f pod.yaml
+- kubectl get pods
+- kubectl describe pod <podname>
