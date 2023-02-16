@@ -178,4 +178,4 @@
 - cat pod.yaml
 - kubectl apply -f pod.yaml
 - kubectl get pods
-- kubectl describe pod <podname>
+- kubectl describe pod (podname)
