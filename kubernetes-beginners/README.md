@@ -94,31 +94,31 @@
 
 ## YAML
 
-- ![20230216_132752](https://user-images.githubusercontent.com/57224583/219304695-2cff5c7f-ce88-45d9-ba46-621bedb2ce3a.jpg)
+- ![20230216_132717](https://user-images.githubusercontent.com/57224583/219305060-a6c43299-c6de-40ca-a71e-5ddd0d909f27.jpg)
 
 - YAML file is used to represent the DATA, the configuration DATA
 
-- ![image](https://user-images.githubusercontent.com/57224583/219025991-c6dd7f31-7ce5-4aea-b79f-f44d3f601192.png)
+- ![20230216_132752](https://user-images.githubusercontent.com/57224583/219304695-2cff5c7f-ce88-45d9-ba46-621bedb2ce3a.jpg)
 
-- ![image](https://user-images.githubusercontent.com/57224583/219026343-ece6ccfc-3962-4d7a-b182-b1f0dc0bf316.png)
+- ![20230216_132816](https://user-images.githubusercontent.com/57224583/219305231-55e07ee7-a06b-4226-a91b-88adf86eb9bb.jpg)
 
-- ![image](https://user-images.githubusercontent.com/57224583/219026468-74fa76a3-b8ca-4330-8091-ce6182dd1964.png)
+- ![20230216_132827](https://user-images.githubusercontent.com/57224583/219305349-57cc09e8-7ff5-4993-a1c1-90e6ea4ff0ba.jpg)
 
 - When to use:
 
   - Dictionaries
 
-    - ![image](https://user-images.githubusercontent.com/57224583/219026848-f1031c47-3509-414e-9a1f-fe7ebdbf049d.png)
+    - ![20230216_132902](https://user-images.githubusercontent.com/57224583/219305440-524b0b96-d38c-4450-96e9-47606ae23a96.jpg)
 
   - List
 
-    - ![image](https://user-images.githubusercontent.com/57224583/219027275-1757e7b2-92aa-4272-a498-533191d67115.png)
+    - ![20230216_132919](https://user-images.githubusercontent.com/57224583/219305735-68e186f5-9f10-4b33-92da-311e154ccec4.jpg)
 
   - List of Dictionaries
-    - ![image](https://user-images.githubusercontent.com/57224583/219027150-6094938e-5448-43f5-8a5c-b68412ac9fae.png)
+    - ![20230216_132937](https://user-images.githubusercontent.com/57224583/219305520-88cccc0c-86b0-4ba8-8f27-02acf81ff36c.jpg)
 
 - Notes:
-  - ![image](https://user-images.githubusercontent.com/57224583/219027639-877c7151-20a4-4736-88cd-2d41339f780c.png)
+  - ![20230216_133003](https://user-images.githubusercontent.com/57224583/219305846-b2f5ccd8-3995-4bc8-9699-137654702c22.jpg)
 
 ## Kubernetes Concepts- PODS, ReplicaSets, Deployment
 
@@ -126,7 +126,7 @@
 
 - Kubernetes uses YAML files as input for the creation of objects such as PODs, Replicas, Deployments, services etc. All of these follow similar structure. A kubernetes definition file always contains 4 top level fields. The apiVersion, kind, metadata and spec. These are top level or root level properties. Think of them as siblings, children of the same parent. These are all REQUIRED fields, so you MUST have them in your configuration file.
 
-- ![image](https://user-images.githubusercontent.com/57224583/219301062-bdee4cec-a7bd-49b5-91d8-d51bf271daa5.png)
+- ![20230216_133338](https://user-images.githubusercontent.com/57224583/219305923-fafd2740-c218-4972-815e-e3438516c202.jpg)
 
 - Let us look at each one of them.
 
@@ -148,8 +148,10 @@
   - The last section in the configuration file is the specification which is written as spec.
     - Depending on the object we are going to create, this is were we provide additional information to kubernetes pertaining to that object. This is going to be different for different objects, so its important to understand or refer to the documentation section to get the right format for each. Since we are only creating a pod with a single container in it, it is easy. Spec is a dictionary so add a property under it called containers, which is a list or an array. The reason this property is a list is because the PODs can have multiple containers within them as we learned in the lecture earlier. In this case though, we will only add a single item in the list, since we plan to have only a single container in the POD. The item in the list is a dictionary, so add a name and image property. The value for image is nginx.
 
-* Once the file is created, run the command kubectl create -f followed by the file name
+- Once the file is created, run the command kubectl create -f followed by the file name
   which is pod-definition.yml and kubernetes creates the pod.
   So to summarize remember the 4 top level properties. apiVersion, kind, metadata
   and spec. Then start by adding values to those depending on the object you are
   creating.
+
+  - ![20230216_133412](https://user-images.githubusercontent.com/57224583/219306005-a3b3c18b-d0d3-4540-8456-11885f7a78e5.jpg)
