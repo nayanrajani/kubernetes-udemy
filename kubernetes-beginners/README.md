@@ -228,3 +228,46 @@
         - <img width="299" alt="image" src="https://user-images.githubusercontent.com/57224583/219338533-3320365e-eba4-4ce2-bd30-d283004b097a.png">
 
   ### Replication Controller & ReplicaSet
+
+  - ![20230216_163238](https://user-images.githubusercontent.com/57224583/219348032-1ac924da-2e3a-4976-9502-63c122c22c5b.jpg)
+
+    - Replication Controllers
+
+      - Controllers are the brain behind Kubernetes. They are processes that monitor kubernetes objects and respond accordingly.
+
+    - It’s important to note that there are two similar terms. Replication Controller and Replica Set. Both have the same purpose but they are not the same. Replication Controller is the older technology that is being replaced by Replica Set. Replica set is the new recommended way to setup replication. However, whatever we discussed in the previous few slides remain applicable to both these technologies. There are minor differences in the way each works and we will look at that in a bit.
+
+    - <img width="429" alt="image" src="https://user-images.githubusercontent.com/57224583/219348839-d18013fc-bd6b-4d88-bbc0-593e74acbea6.png">
+
+    - ReplicaSet
+
+      - The apiVersion though is a bit different. It is apps/v1 which is different from what we had before for replication controller.
+      - The kind would be ReplicaSet and we add name and labels in metadata.
+      - ![MicrosoftTeams-image (1)](https://user-images.githubusercontent.com/57224583/219351093-0f465160-5cd1-4302-8724-70c6afc2fade.png)
+
+    - Labels and Selectors
+
+      - <img width="424" alt="image" src="https://user-images.githubusercontent.com/57224583/219351761-6b633d21-17a1-40ac-87b3-2a2f87164f42.png">
+
+    - Scale
+      - <img width="426" alt="image" src="https://user-images.githubusercontent.com/57224583/219352703-f0e1febb-4660-4011-87d1-45601c5916d0.png">
+
+  - Commands
+    - <img width="388" alt="image" src="https://user-images.githubusercontent.com/57224583/219352975-d65a05cb-9e50-46f0-b535-412dd1614909.png">
+
+  #### Demo For ReplicaSet
+
+  - vi replicaset.yaml
+    - check yaml folder for code
+    - <img width="267" alt="image" src="https://user-images.githubusercontent.com/57224583/219360322-937bcfcd-7a14-4499-8811-8cce1c96bc65.png">
+  - cat replicaset.yaml
+  - kubectl get pods
+  - kubectl get replicaset
+  - kubectl delete pod (podname)
+  - kubectl get replicaset
+  - kubectl get pods
+  - kubectl describe replicaset myapp-replicaset
+  - kubectl edit replicaset myapp-replicaset
+    - change replicas to 4
+  - kubectl get pods
+  - kubectl scale replicaset myapp-replicaset --replicas=2
