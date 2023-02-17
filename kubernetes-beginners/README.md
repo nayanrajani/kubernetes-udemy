@@ -557,4 +557,58 @@
 
       - What end users really want is a single URL to access the application. For this, you will be required to setup a separate Load Balancer VM in your environment. In this case I deploy a new VM for load balancer purposes and configure it to forward requests that come to it to any of the Ips of the Kubernetes nodes. I will then configure my organizations DNS to point to this load balancer when a user hosts http://myapp.com. Now setting up that load balancer by myself is a tedious task, and I might have to do that in my local or onprem environment. However, if I happen to be on a supported CloudPlatform, like Google Cloud Platform, I could leverage the native load balancing functionalities of the cloud platform to set this up. Again you don’t have to set that up manually, Kubernetes sets it up for you. Kubernetes has built-in integration with supported cloud platforms.
 
+    - <img width="398" alt="image" src="https://user-images.githubusercontent.com/57224583/219620162-836cafa5-a290-40c4-94f5-271c9afa1575.png">
+
     #### Coding Excercise
+
+    - check services then at last check the image
+
+      - Services - 1
+
+        - Introduction: Let us start with Services! Given a service-definition.yml file. We are only getting started with it, so let's get it populated.
+        - Instruction: Add all the root level properties to it. Note: Only add the properties, not any values.
+
+      - Services - 2
+
+        - Introduction: Let us now add values for Service. Service is under apiVersion v1
+        - Instruction: Update values for apiVersion and kind
+
+      - Services - 3
+
+        - Introduction: Let us now add values for metadata.
+        - Instruction: Add a name for the service = frontend and a label = app=>myapp
+
+      - Services - 4
+
+        - Introduction: Let us now add values for spec section. The spec section for Services have type, selector and ports.
+        - Instruction: Add properties under spec section - type, selector and ports. Do not add any values for them.
+
+      - Services - 5
+
+        - Introduction: Let us now add values for ports. Ports is an Array/ List. Each item in the list has a set of properties - port and targetPort
+        - Instruction: Create an Array/List item under ports. Add a dictionary with properties port and targetPort. Set values for both to port 80.
+        - Note: We will not be providing a NodePort as we would like Kubernetes to assign one automatically for us.
+
+      - Services - 6
+
+        - Introduction: Let us now add values for type. Since we are creating a frontend service for enabling external access to users, we will set it to NodePort.
+        - Instruction: Set value for type to NodePort.
+
+      - Services - 7
+
+        - Introduction: Let us now add values for selector. We need to link the Service to the PODs created by the deployment.
+        - Instruction: Given the deployment-definition.yml file we created in the previous Section. Copy the appropriate labels and paste it under selector section of service-definition.yml file.
+
+      - <img width="453" alt="image" src="https://user-images.githubusercontent.com/57224583/219631053-048d6b9b-45b3-48d2-9039-7b32623e2e77.png">
+
+      - Services - 8
+
+        - Introduction: Let us now try to create a service-definition.yml file from scratch. This time all in one go. You are tasked to create a service to enable the frontend pods to access a backend set of Pods.
+        - Instruction: Use the information provided in the below table to create a backend service definition file. Refer to the provided deployment-definition file for information regarding the PODs.
+          Service Name: image-processing
+          labels: app=> myapp
+          type: ClusterIP
+          Port on the service: 80
+          Port exposed by image processing container: 8080
+
+        - <img width="689" alt="image" src="https://user-images.githubusercontent.com/57224583/219630708-29d33e2b-becb-4aeb-b931-8737222e10c0.png">
