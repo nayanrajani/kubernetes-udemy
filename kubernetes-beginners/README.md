@@ -273,58 +273,120 @@
     - kubectl get pods
     - kubectl scale replicaset myapp-replicaset --replicas=2
 
-  #### Coding Exercise
+    #### Coding Exercise
 
-  - ReplicaSet - 1
+    - this contains coding excercise
 
-    - Introduction: Let us start with ReplicaSets! Given a blank replicaset-definition.yml file. We are only getting started with it, so let's get it populated.
-    - Instruction: Add all the root level properties to it.
-    - Note: Only add the properties, not any values yet.
-      apiVersion:
-      kind:
-      metadata:
-      spec:
+      - ReplicaSet - 1
 
-  - ReplicaSet - 2
+        - Introduction: Let us start with ReplicaSets! Given a blank replicaset-definition.yml file. We are only getting started with it, so let's get it populated.
+        - Instruction: Add all the root level properties to it.
+        - Note: Only add the properties, not any values yet.
+          apiVersion:
+          kind:
+          metadata:
+          spec:
 
-    - Introduction: Let us now add values for ReplicaSet. ReplicaSet is under apiVersion - apps/v1
-    - Instruction: Update values for apiVersion and kind
-      apiVersion: apps/v1
-      kind: ReplicaSet
-      metadata:
-      spec:
+      - ReplicaSet - 2
 
-  - PODs - 5
+        - Introduction: Let us now add values for ReplicaSet. ReplicaSet is under apiVersion - apps/v1
+        - Instruction: Update values for apiVersion and kind
+          apiVersion: apps/v1
+          kind: ReplicaSet
+          metadata:
+          spec:
 
-    - Introduction: Let us add some labels to our Pod
-    - Instruction: Add a property "labels" under metadata with a child property "app" with a value "myapp". Remember to have equal number of spaces before "name" and "labels" so they are siblings
+      - PODs - 5
 
-      - <img width="275" alt="image" src="https://user-images.githubusercontent.com/57224583/219367125-f7c057d3-d874-4aae-b515-bdef1e6bcb9f.png">
+        - Introduction: Let us add some labels to our Pod
+        - Instruction: Add a property "labels" under metadata with a child property "app" with a value "myapp". Remember to have equal number of spaces before "name" and "labels" so they are siblings
 
-  - ReplicaSet - 3
+          - <img width="275" alt="image" src="https://user-images.githubusercontent.com/57224583/219367125-f7c057d3-d874-4aae-b515-bdef1e6bcb9f.png">
 
-    - Introduction: Let us now add values for metadata
-    - Instruction: Name the ReplicaSet - frontend. And add labels app=>mywebsite and tier=> frontend
+      - ReplicaSet - 3
 
-  - ReplicaSet - 4
+        - Introduction: Let us now add values for metadata
+        - Instruction: Name the ReplicaSet - frontend. And add labels app=>mywebsite and tier=> frontend
 
-    - Introduction: Let us now get to the specification
-    - Instruction: The spec section for ReplicaSet has 3 fields: replicas, template and selector. Simply add these properties. Do not add any values yet.
+      - ReplicaSet - 4
 
-  - ReplicaSet - 5
+        - Introduction: Let us now get to the specification
+        - Instruction: The spec section for ReplicaSet has 3 fields: replicas, template and selector. Simply add these properties. Do not add any values yet.
 
-    - Instruction: Let us update the number of replicas to 4.
+      - ReplicaSet - 5
 
-  - ReplicaSet - 6
+        - Instruction: Let us update the number of replicas to 4.
 
-    - Introduction: The template section expects a Pod definition. Luckily, we have the one we created in the previous set of exercises. Next to the replicaset-definition.yml you will now find the same pod-definition.yml file that you created before.
-    - Instruction: Let us now copy the contents of the pod-definition.yml file, except for the apiVersion and kind and place it under the template section. Take extra care on moving the contents to the right so it falls under template.
+      - ReplicaSet - 6
 
-  - ReplicaSet - 7
+        - Introduction: The template section expects a Pod definition. Luckily, we have the one we created in the previous set of exercises. Next to the replicaset-definition.yml you will now find the same pod-definition.yml file that you created before.
+        - Instruction: Let us now copy the contents of the pod-definition.yml file, except for the apiVersion and kind and place it under the template section. Take extra care on moving the contents to the right so it falls under template.
 
-    - Introduction: Let us now link the pods to the ReplicaSet by updating selectors.
-    - Instruction: Add a property "matchLabels" under selector and copy the labels defined in the pod-definition under it.
+      - ReplicaSet - 7
 
-      - Note: This may not work in play-with-k8s as it runs on 1.8 version of kubernetes. ReplicaSets moved to apps/v1 in 1.9 version of Kubernetes.
+        - Introduction: Let us now link the pods to the ReplicaSet by updating selectors.
+        - Instruction: Add a property "matchLabels" under selector and copy the labels defined in the pod-definition under it.
+
+          - Note: This may not work in play-with-k8s as it runs on 1.8 version of kubernetes. ReplicaSets moved to apps/v1 in 1.9 version of Kubernetes.
 
       - <img width="441" alt="image" src="https://user-images.githubusercontent.com/57224583/219368541-41feb3fb-5eba-4ee8-b749-e2fb238c19e2.png">
+
+  ### Deployment
+
+  - <img width="425" alt="image" src="https://user-images.githubusercontent.com/57224583/219555358-d61303a2-486f-40e3-bdc1-c2a196a8c92e.png">
+
+  - Deployment which is a kubernetes object that comes higher in the hierarchy. The deployment provides us with capabilities to upgrade the underlying instances seamlessly using rolling updates, undo changes, and pause and resume changes to deployments.
+
+  - <img width="429" alt="image" src="https://user-images.githubusercontent.com/57224583/219555592-2309a767-a378-4af4-bf01-556abd19f064.png">
+
+    #### Demo for Deplyment
+
+    - check deployment.yaml
+      - <img width="239" alt="image" src="https://user-images.githubusercontent.com/57224583/219556587-40c30e26-d562-4aa4-8549-fe8b6996a440.png">
+    - cat deployment.yaml
+    - kubectl create -f deployment.yaml
+    - kubectl get deployment
+    - kubectl get pods
+    - kubectl describe deployment myapp-deployment
+    - kubectl get all
+
+    #### Coding Exercise
+
+    - this contains coding excercise
+
+      - Deployment - 1
+
+        - Introduction: Let us start with Deployments! Given a deployment-definition.yml file. We are only getting started with it, so let's get it populated.
+        - Instruction: Add all the root level properties to it. Note: Only add the properties, not any values yet
+
+      - Deployment - 2
+
+        - Introduction: Let us now add values for Deployment. Deployment is under apiVersion apps/v1
+        - Instruction: Update values for apiVersion and kind
+
+      - Deployment - 3
+
+        - Introduction: Let us now add values for metadata
+        - Instruction: Name the Deployment frontend. And add labels app=>mywebsite and tier=> frontend
+
+      - Deployment - 4
+
+        - Introduction: Let us now get to the specification
+        - Instruction: The spec section for Deployment has 3 fields: replicas, template and selector. Simply add these properties. Do not add any values.
+
+      - Deployment - 5
+
+        - Instruction: Let us update the number of replicas to 4.
+
+      - Deployment - 6
+
+        - Introduction: The template section expects a Pod definition. Luckily, we have the one we created in the previous set of exercises. Next to the deployment-definition.yml you will now find the same pod-definition.yml file that you created before.
+        - Instruction: Let us now copy the contents of the pod-definition.yml file, except for the apiVersion and kind and place it under the template section. Take extra care on moving the contents to the right so it falls under template
+
+      - Deployment - 7
+
+        - Introduction: Let us now link the pods to the Deployment by updating selectors.
+        - Instruction: Add a property "matchLabels" under selector and copy the labels defined in the pod-definition under it.
+        - Note: this may not work in play-with-k8s as it runs on 1.8 version of kubernetes
+
+      - <img width="418" alt="image" src="https://user-images.githubusercontent.com/57224583/219558965-495b8b4f-4bed-47ed-b926-f6e6bfcd4ca7.png">
