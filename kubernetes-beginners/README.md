@@ -118,275 +118,354 @@
     - ![20230216_132937](https://user-images.githubusercontent.com/57224583/219305520-88cccc0c-86b0-4ba8-8f27-02acf81ff36c.jpg)
 
 - Notes:
+
   - ![20230216_133003](https://user-images.githubusercontent.com/57224583/219305846-b2f5ccd8-3995-4bc8-9699-137654702c22.jpg)
 
-## Kubernetes Concepts- PODS, ReplicaSets, Deployment
+  ## Kubernetes Concepts- PODS, ReplicaSets, Deployment
 
-- this contains all the details
+  - this contains all the details
 
-  ### POds with YAMl
+    ### POds with YAMl
 
-  - Kubernetes uses YAML files as input for the creation of objects such as PODs, Replicas, Deployments, services etc. All of these follow similar structure. A kubernetes definition file always contains 4 top level fields. The apiVersion, kind, metadata and spec. These are top level or root level properties. Think of them as siblings, children of the same parent. These are all REQUIRED fields, so you MUST have them in your configuration file.
+    - Kubernetes uses YAML files as input for the creation of objects such as PODs, Replicas, Deployments, services etc. All of these follow similar structure. A kubernetes definition file always contains 4 top level fields. The apiVersion, kind, metadata and spec. These are top level or root level properties. Think of them as siblings, children of the same parent. These are all REQUIRED fields, so you MUST have them in your configuration file.
 
-  - ![20230216_133338](https://user-images.githubusercontent.com/57224583/219305923-fafd2740-c218-4972-815e-e3438516c202.jpg)
+    - ![20230216_133338](https://user-images.githubusercontent.com/57224583/219305923-fafd2740-c218-4972-815e-e3438516c202.jpg)
 
-  - Let us look at each one of them.
+    - Let us look at each one of them.
 
-    - The first one is the apiVersion.
+      - The first one is the apiVersion.
 
-      - This is the version of the kubernetes API we’re using to create the object. Depending on what we are trying to create we must use the RIGHT apiVersion. For now since we are working on PODs, we will set the apiVersion as v1. Few other possible values for this field are apps/v1beta1, extensions/v1beta1 etc. We will see what these are for later in this course.
+        - This is the version of the kubernetes API we’re using to create the object. Depending on what we are trying to create we must use the RIGHT apiVersion. For now since we are working on PODs, we will set the apiVersion as v1. Few other possible values for this field are apps/v1beta1, extensions/v1beta1 etc. We will see what these are for later in this course.
 
-    - Next is the kind.
+      - Next is the kind.
 
-      - The kind refersto the type of object we are trying to create, which in this case happens to be a POD. So we will set it as Pod. Some other possible values here could be ReplicaSet or Deployment or Service, which is what you see in the kind field in the table on the right.
+        - The kind refersto the type of object we are trying to create, which in this case happens to be a POD. So we will set it as Pod. Some other possible values here could be ReplicaSet or Deployment or Service, which is what you see in the kind field in the table on the right.
 
-    - The next is metadata.
+      - The next is metadata.
 
-      - The metadata is data about the object like its name, labels etc. As you can see unlike the first two were you specified a string value, this, is in the form of a dictionary. So everything under metadata is intended to the right a little bit and so names and labels are children of metadata. The number of spaces before the two properties name and labels doesn’t matter, but they should be the same as they are siblings. In this case labels has more spaces on the left than name and so it is now a child of the name property instead of a sibling. Also the two properties must have MORE spaces than its parent, which is metadata, so that its intended to the right a little bit. In this case all 3 have the same number of spaces before them and so they are all siblings, which is not correct. Under metadata, the name is a string value – so you can name your POD myapp-pod - and the labels is a dictionary. So labels is a dictionary within the metadata dictionary. And it can have any key and value pairs as you wish. For now I have added a label app with the value myapp. Similarly you could add other labels as you see fit which will help you identify these objects at a later point in time. Say for example there are 100s of PODs running a front-endapplication, and 100’s of them running a backend application or a database, it will be DIFFICULT for you to group these PODs once they are deployed. If you label them now as front-end, back-end or database, you will be able to filter the PODs based on this label at a later point in time.
+        - The metadata is data about the object like its name, labels etc. As you can see unlike the first two were you specified a string value, this, is in the form of a dictionary. So everything under metadata is intended to the right a little bit and so names and labels are children of metadata. The number of spaces before the two properties name and labels doesn’t matter, but they should be the same as they are siblings. In this case labels has more spaces on the left than name and so it is now a child of the name property instead of a sibling. Also the two properties must have MORE spaces than its parent, which is metadata, so that its intended to the right a little bit. In this case all 3 have the same number of spaces before them and so they are all siblings, which is not correct. Under metadata, the name is a string value – so you can name your POD myapp-pod - and the labels is a dictionary. So labels is a dictionary within the metadata dictionary. And it can have any key and value pairs as you wish. For now I have added a label app with the value myapp. Similarly you could add other labels as you see fit which will help you identify these objects at a later point in time. Say for example there are 100s of PODs running a front-endapplication, and 100’s of them running a backend application or a database, it will be DIFFICULT for you to group these PODs once they are deployed. If you label them now as front-end, back-end or database, you will be able to filter the PODs based on this label at a later point in time.
 
-      - It’s IMPORTANT to note that under metadata, you can only specify name or labels or anything else that kubernetes expects to be under metadata. You CANNOT add any other property as you wish under this. However, under labels you CAN have any kind of key or value pairs as you see fit. So its IMPORTANT to understand what each of these parameters expect.
+        - It’s IMPORTANT to note that under metadata, you can only specify name or labels or anything else that kubernetes expects to be under metadata. You CANNOT add any other property as you wish under this. However, under labels you CAN have any kind of key or value pairs as you see fit. So its IMPORTANT to understand what each of these parameters expect.
 
-    - So far we have only mentioned the type and name of the object we need to create which happens to be a POD with the name myapp-pod, but we haven’t really specified the container or image we need in the pod.
-    - The last section in the configuration file is the specification which is written as spec.
-      - Depending on the object we are going to create, this is were we provide additional information to kubernetes pertaining to that object. This is going to be different for different objects, so its important to understand or refer to the documentation section to get the right format for each. Since we are only creating a pod with a single container in it, it is easy. Spec is a dictionary so add a property under it called containers, which is a list or an array. The reason this property is a list is because the PODs can have multiple containers within them as we learned in the lecture earlier. In this case though, we will only add a single item in the list, since we plan to have only a single container in the POD. The item in the list is a dictionary, so add a name and image property. The value for image is nginx.
+      - So far we have only mentioned the type and name of the object we need to create which happens to be a POD with the name myapp-pod, but we haven’t really specified the container or image we need in the pod.
+      - The last section in the configuration file is the specification which is written as spec.
+        - Depending on the object we are going to create, this is were we provide additional information to kubernetes pertaining to that object. This is going to be different for different objects, so its important to understand or refer to the documentation section to get the right format for each. Since we are only creating a pod with a single container in it, it is easy. Spec is a dictionary so add a property under it called containers, which is a list or an array. The reason this property is a list is because the PODs can have multiple containers within them as we learned in the lecture earlier. In this case though, we will only add a single item in the list, since we plan to have only a single container in the POD. The item in the list is a dictionary, so add a name and image property. The value for image is nginx.
 
-  - Once the file is created, run the command kubectl create -f followed by the file name
-    which is pod-definition.yml and kubernetes creates the pod.
-    So to summarize remember the 4 top level properties. apiVersion, kind, metadata
-    and spec. Then start by adding values to those depending on the object you are
-    creating.
+    - Once the file is created, run the command kubectl create -f followed by the file name
+      which is pod-definition.yml and kubernetes creates the pod.
+      So to summarize remember the 4 top level properties. apiVersion, kind, metadata
+      and spec. Then start by adding values to those depending on the object you are
+      creating.
 
-    - ![20230216_133412](https://user-images.githubusercontent.com/57224583/219306005-a3b3c18b-d0d3-4540-8456-11885f7a78e5.jpg)
+      - ![20230216_133412](https://user-images.githubusercontent.com/57224583/219306005-a3b3c18b-d0d3-4540-8456-11885f7a78e5.jpg)
 
-  ### Demo
+    ### Demo
 
-  - vi pod.yaml
+    - vi pod.yaml
 
-    - Check yaml folder
-    - ![20230216_140608](https://user-images.githubusercontent.com/57224583/219311648-46f9e264-7180-4f66-9428-500f7a30e2cc.jpg)
+      - Check yaml folder
+      - ![20230216_140608](https://user-images.githubusercontent.com/57224583/219311648-46f9e264-7180-4f66-9428-500f7a30e2cc.jpg)
 
-  - cat pod.yaml
-  - kubectl apply -f pod.yaml
-  - kubectl get pods
-  - kubectl describe pod (podname)
+    - cat pod.yaml
+    - kubectl apply -f pod.yaml
+    - kubectl get pods
+    - kubectl describe pod (podname)
 
-  ### Tips & Tricks
+    ### Tips & Tricks
 
-  - Extension for VSCode
+    - Extension for VSCode
 
-    - Kubernetes support
-    - Yaml by RedHat
+      - Kubernetes support
+      - Yaml by RedHat
 
-    #### Coding Exercise
+      #### Coding Exercise
 
-    - PODs - 1
+      - this contains coding excercise
 
-      - Introduction: Let us start simple! Given a pod-definition.yml file. We are only getting started with it. I have added two root level properties - apiVersion and kind.
-      - Instruction: Add the missing two properties - metadata and spec
-        - <img width="302" alt="image" src="https://user-images.githubusercontent.com/57224583/219335431-24512e4d-d2c3-4876-8e92-c9fc9cfdd80e.png">
+        - PODs - 1
 
-    - PODs - 2
+          - Introduction: Let us start simple! Given a pod-definition.yml file. We are only getting started with it. I have added two root level properties - apiVersion and kind.
+          - Instruction: Add the missing two properties - metadata and spec
+            - <img width="302" alt="image" src="https://user-images.githubusercontent.com/57224583/219335431-24512e4d-d2c3-4876-8e92-c9fc9cfdd80e.png">
 
-      - Introduction: Let us now populate values for each property. Start with apiVersion.
-      - Instruction: Update value of apiVersion to v1. Remember to add a space between colon (:) and the value (v1)
+        - PODs - 2
 
-    - PODs - 3
+          - Introduction: Let us now populate values for each property. Start with apiVersion.
+          - Instruction: Update value of apiVersion to v1. Remember to add a space between colon (:) and the value (v1)
 
-      - Instruction: Update value of kind to Pod.
+        - PODs - 3
 
-    - PODs - 4
+          - Instruction: Update value of kind to Pod.
 
-      - Introduction: Let us now get to the metadata section.
-      - Instruction: Add a property "name" under metadata with value "myapp-pod". Remember to add a space before 'name' to make it a child of metadata
+        - PODs - 4
 
-    - PODs - 6
+          - Introduction: Let us now get to the metadata section.
+          - Instruction: Add a property "name" under metadata with value "myapp-pod". Remember to add a space before 'name' to make it a child of metadata
 
-      - Introduction: We now need to provide information regarding the docker image we plan to use.
-      - Instruction: Add a property containers under spec section. Do not add anything under it yet.
+        - PODs - 6
 
-    - PODs - 7
+          - Introduction: We now need to provide information regarding the docker image we plan to use.
+          - Instruction: Add a property containers under spec section. Do not add anything under it yet.
 
-      - Instruction: Containers is an array/list. So create the first element/item in the array/list and add the following properties to it: name - nginx and image - nginx
+        - PODs - 7
 
-    - <img width="262" alt="image" src="https://user-images.githubusercontent.com/57224583/219337266-a830744e-46ad-4870-bde2-ad97b2db81a7.png">
+          - Instruction: Containers is an array/list. So create the first element/item in the array/list and add the following properties to it: name - nginx and image - nginx
 
-    - PODs - 8
+        - <img width="262" alt="image" src="https://user-images.githubusercontent.com/57224583/219337266-a830744e-46ad-4870-bde2-ad97b2db81a7.png">
 
-      - Introduction: Perfect! You have successfully created a Kubernetes-Definition file. Let us try it one more time, this time all on your own!
-      - Instruction: Create a Kubernetes Pod definition file using values below:
-        Name: postgres
-        Labels: tier => db-tier
-        Container name: postgres
-        Image: postgres
+        - PODs - 8
+
+          - Introduction: Perfect! You have successfully created a Kubernetes-Definition file. Let us try it one more time, this time all on your own!
+          - Instruction: Create a Kubernetes Pod definition file using values below:
+            Name: postgres
+            Labels: tier => db-tier
+            Container name: postgres
+            Image: postgres
 
         - <img width="275" alt="image" src="https://user-images.githubusercontent.com/57224583/219337742-183a12a6-d693-4c57-bc6a-cf85a665e874.png">
 
-    - PODs - 9
+        - PODs - 9
 
-      - Introduction: Postgres Docker image requires an environment variable to be set for password. - Instruction: Set an environment variable for the docker container. POSTGRES_PASSWORD with a value mysecretpassword. I know we haven't discussed this in the lecture, but it is easy. To pass in an environment variable add a new property 'env' to the container object. It is a sibling of image and name. env is an array/list. So add a new item under it. The item will have properties name and value. name should be the name of the environment variable - POSTGRES_PASSWORD. And value should be the password - mysecretpassword
+          - Introduction: Postgres Docker image requires an environment variable to be set for password. - Instruction: Set an environment variable for the docker container. POSTGRES_PASSWORD with a value mysecretpassword. I know we haven't discussed this in the lecture, but it is easy. To pass in an environment variable add a new property 'env' to the container object. It is a sibling of image and name. env is an array/list. So add a new item under it. The item will have properties name and value. name should be the name of the environment variable - POSTGRES_PASSWORD. And value should be the password - mysecretpassword
 
         - <img width="299" alt="image" src="https://user-images.githubusercontent.com/57224583/219338533-3320365e-eba4-4ce2-bd30-d283004b097a.png">
 
-  ### Replication Controller & ReplicaSet
+    ### Replication Controller & ReplicaSet
 
-  - ![20230216_163238](https://user-images.githubusercontent.com/57224583/219348032-1ac924da-2e3a-4976-9502-63c122c22c5b.jpg)
+    - ![20230216_163238](https://user-images.githubusercontent.com/57224583/219348032-1ac924da-2e3a-4976-9502-63c122c22c5b.jpg)
 
-    - Replication Controllers
+      - Replication Controllers
 
-      - Controllers are the brain behind Kubernetes. They are processes that monitor kubernetes objects and respond accordingly.
+        - Controllers are the brain behind Kubernetes. They are processes that monitor kubernetes objects and respond accordingly.
 
-    - It’s important to note that there are two similar terms. Replication Controller and Replica Set. Both have the same purpose but they are not the same. Replication Controller is the older technology that is being replaced by Replica Set. Replica set is the new recommended way to setup replication. However, whatever we discussed in the previous few slides remain applicable to both these technologies. There are minor differences in the way each works and we will look at that in a bit.
+      - It’s important to note that there are two similar terms. Replication Controller and Replica Set. Both have the same purpose but they are not the same. Replication Controller is the older technology that is being replaced by Replica Set. Replica set is the new recommended way to setup replication. However, whatever we discussed in the previous few slides remain applicable to both these technologies. There are minor differences in the way each works and we will look at that in a bit.
 
-    - <img width="429" alt="image" src="https://user-images.githubusercontent.com/57224583/219348839-d18013fc-bd6b-4d88-bbc0-593e74acbea6.png">
+      - <img width="429" alt="image" src="https://user-images.githubusercontent.com/57224583/219348839-d18013fc-bd6b-4d88-bbc0-593e74acbea6.png">
 
-    - ReplicaSet
+      - ReplicaSet
 
-      - The apiVersion though is a bit different. It is apps/v1 which is different from what we had before for replication controller.
-      - The kind would be ReplicaSet and we add name and labels in metadata.
-      - ![MicrosoftTeams-image (1)](https://user-images.githubusercontent.com/57224583/219351093-0f465160-5cd1-4302-8724-70c6afc2fade.png)
+        - The apiVersion though is a bit different. It is apps/v1 which is different from what we had before for replication controller.
+        - The kind would be ReplicaSet and we add name and labels in metadata.
+        - ![MicrosoftTeams-image (1)](https://user-images.githubusercontent.com/57224583/219351093-0f465160-5cd1-4302-8724-70c6afc2fade.png)
 
-    - Labels and Selectors
+      - Labels and Selectors
 
-      - <img width="424" alt="image" src="https://user-images.githubusercontent.com/57224583/219351761-6b633d21-17a1-40ac-87b3-2a2f87164f42.png">
+        - <img width="424" alt="image" src="https://user-images.githubusercontent.com/57224583/219351761-6b633d21-17a1-40ac-87b3-2a2f87164f42.png">
 
-    - Scale
-      - <img width="426" alt="image" src="https://user-images.githubusercontent.com/57224583/219352703-f0e1febb-4660-4011-87d1-45601c5916d0.png">
+      - Scale
+        - <img width="426" alt="image" src="https://user-images.githubusercontent.com/57224583/219352703-f0e1febb-4660-4011-87d1-45601c5916d0.png">
 
-  - Commands
+    - Commands
 
-    - <img width="388" alt="image" src="https://user-images.githubusercontent.com/57224583/219352975-d65a05cb-9e50-46f0-b535-412dd1614909.png">
+      - <img width="388" alt="image" src="https://user-images.githubusercontent.com/57224583/219352975-d65a05cb-9e50-46f0-b535-412dd1614909.png">
 
-    #### Demo For ReplicaSet
+      #### Demo For ReplicaSet
 
-    - vi replicaset.yaml
-      - check yaml folder for code
-      - <img width="267" alt="image" src="https://user-images.githubusercontent.com/57224583/219360322-937bcfcd-7a14-4499-8811-8cce1c96bc65.png">
-    - cat replicaset.yaml
-    - kubectl get pods
-    - kubectl get replicaset
-    - kubectl delete pod (podname)
-    - kubectl get replicaset
-    - kubectl get pods
-    - kubectl describe replicaset myapp-replicaset
-    - kubectl edit replicaset myapp-replicaset
-      - change replicas to 4
-    - kubectl get pods
-    - kubectl scale replicaset myapp-replicaset --replicas=2
+      - vi replicaset.yaml
+        - check yaml folder for code
+        - <img width="267" alt="image" src="https://user-images.githubusercontent.com/57224583/219360322-937bcfcd-7a14-4499-8811-8cce1c96bc65.png">
+      - cat replicaset.yaml
+      - kubectl get pods
+      - kubectl get replicaset
+      - kubectl delete pod (podname)
+      - kubectl get replicaset
+      - kubectl get pods
+      - kubectl describe replicaset myapp-replicaset
+      - kubectl edit replicaset myapp-replicaset
+        - change replicas to 4
+      - kubectl get pods
+      - kubectl scale replicaset myapp-replicaset --replicas=2
 
-    #### Coding Exercise
+      #### Coding Exercise
 
-    - this contains coding excercise
+      - this contains coding excercise
 
-      - ReplicaSet - 1
+        - ReplicaSet - 1
 
-        - Introduction: Let us start with ReplicaSets! Given a blank replicaset-definition.yml file. We are only getting started with it, so let's get it populated.
-        - Instruction: Add all the root level properties to it.
-        - Note: Only add the properties, not any values yet.
-          apiVersion:
-          kind:
-          metadata:
-          spec:
+          - Introduction: Let us start with ReplicaSets! Given a blank replicaset-definition.yml file. We are only getting started with it, so let's get it populated.
+          - Instruction: Add all the root level properties to it.
+          - Note: Only add the properties, not any values yet.
+            apiVersion:
+            kind:
+            metadata:
+            spec:
 
-      - ReplicaSet - 2
+        - ReplicaSet - 2
 
-        - Introduction: Let us now add values for ReplicaSet. ReplicaSet is under apiVersion - apps/v1
-        - Instruction: Update values for apiVersion and kind
-          apiVersion: apps/v1
-          kind: ReplicaSet
-          metadata:
-          spec:
+          - Introduction: Let us now add values for ReplicaSet. ReplicaSet is under apiVersion - apps/v1
+          - Instruction: Update values for apiVersion and kind
+            apiVersion: apps/v1
+            kind: ReplicaSet
+            metadata:
+            spec:
 
-      - PODs - 5
+        - PODs - 5
 
-        - Introduction: Let us add some labels to our Pod
-        - Instruction: Add a property "labels" under metadata with a child property "app" with a value "myapp". Remember to have equal number of spaces before "name" and "labels" so they are siblings
+          - Introduction: Let us add some labels to our Pod
+          - Instruction: Add a property "labels" under metadata with a child property "app" with a value "myapp". Remember to have equal number of spaces before "name" and "labels" so they are siblings
 
-          - <img width="275" alt="image" src="https://user-images.githubusercontent.com/57224583/219367125-f7c057d3-d874-4aae-b515-bdef1e6bcb9f.png">
+            - <img width="275" alt="image" src="https://user-images.githubusercontent.com/57224583/219367125-f7c057d3-d874-4aae-b515-bdef1e6bcb9f.png">
 
-      - ReplicaSet - 3
+        - ReplicaSet - 3
 
-        - Introduction: Let us now add values for metadata
-        - Instruction: Name the ReplicaSet - frontend. And add labels app=>mywebsite and tier=> frontend
+          - Introduction: Let us now add values for metadata
+          - Instruction: Name the ReplicaSet - frontend. And add labels app=>mywebsite and tier=> frontend
 
-      - ReplicaSet - 4
+        - ReplicaSet - 4
 
-        - Introduction: Let us now get to the specification
-        - Instruction: The spec section for ReplicaSet has 3 fields: replicas, template and selector. Simply add these properties. Do not add any values yet.
+          - Introduction: Let us now get to the specification
+          - Instruction: The spec section for ReplicaSet has 3 fields: replicas, template and selector. Simply add these properties. Do not add any values yet.
 
-      - ReplicaSet - 5
+        - ReplicaSet - 5
 
-        - Instruction: Let us update the number of replicas to 4.
+          - Instruction: Let us update the number of replicas to 4.
 
-      - ReplicaSet - 6
+        - ReplicaSet - 6
 
-        - Introduction: The template section expects a Pod definition. Luckily, we have the one we created in the previous set of exercises. Next to the replicaset-definition.yml you will now find the same pod-definition.yml file that you created before.
-        - Instruction: Let us now copy the contents of the pod-definition.yml file, except for the apiVersion and kind and place it under the template section. Take extra care on moving the contents to the right so it falls under template.
+          - Introduction: The template section expects a Pod definition. Luckily, we have the one we created in the previous set of exercises. Next to the replicaset-definition.yml you will now find the same pod-definition.yml file that you created before.
+          - Instruction: Let us now copy the contents of the pod-definition.yml file, except for the apiVersion and kind and place it under the template section. Take extra care on moving the contents to the right so it falls under template.
 
-      - ReplicaSet - 7
+        - ReplicaSet - 7
 
-        - Introduction: Let us now link the pods to the ReplicaSet by updating selectors.
-        - Instruction: Add a property "matchLabels" under selector and copy the labels defined in the pod-definition under it.
+          - Introduction: Let us now link the pods to the ReplicaSet by updating selectors.
+          - Instruction: Add a property "matchLabels" under selector and copy the labels defined in the pod-definition under it.
 
-          - Note: This may not work in play-with-k8s as it runs on 1.8 version of kubernetes. ReplicaSets moved to apps/v1 in 1.9 version of Kubernetes.
+            - Note: This may not work in play-with-k8s as it runs on 1.8 version of kubernetes. ReplicaSets moved to apps/v1 in 1.9 version of Kubernetes.
 
-      - <img width="441" alt="image" src="https://user-images.githubusercontent.com/57224583/219368541-41feb3fb-5eba-4ee8-b749-e2fb238c19e2.png">
+        - <img width="441" alt="image" src="https://user-images.githubusercontent.com/57224583/219368541-41feb3fb-5eba-4ee8-b749-e2fb238c19e2.png">
 
-  ### Deployment
+    ### Deployment
 
-  - <img width="425" alt="image" src="https://user-images.githubusercontent.com/57224583/219555358-d61303a2-486f-40e3-bdc1-c2a196a8c92e.png">
+    - <img width="425" alt="image" src="https://user-images.githubusercontent.com/57224583/219555358-d61303a2-486f-40e3-bdc1-c2a196a8c92e.png">
 
-  - Deployment which is a kubernetes object that comes higher in the hierarchy. The deployment provides us with capabilities to upgrade the underlying instances seamlessly using rolling updates, undo changes, and pause and resume changes to deployments.
+    - Deployment which is a kubernetes object that comes higher in the hierarchy. The deployment provides us with capabilities to upgrade the underlying instances seamlessly using rolling updates, undo changes, and pause and resume changes to deployments.
 
-  - <img width="429" alt="image" src="https://user-images.githubusercontent.com/57224583/219555592-2309a767-a378-4af4-bf01-556abd19f064.png">
+    - <img width="429" alt="image" src="https://user-images.githubusercontent.com/57224583/219555592-2309a767-a378-4af4-bf01-556abd19f064.png">
 
-    #### Demo for Deplyment
+      #### Demo for Deplyment
 
-    - check deployment.yaml
-      - <img width="239" alt="image" src="https://user-images.githubusercontent.com/57224583/219556587-40c30e26-d562-4aa4-8549-fe8b6996a440.png">
-    - cat deployment.yaml
-    - kubectl create -f deployment.yaml
-    - kubectl get deployment
-    - kubectl get pods
-    - kubectl describe deployment myapp-deployment
-    - kubectl get all
+      - check deployment.yaml
+        - <img width="239" alt="image" src="https://user-images.githubusercontent.com/57224583/219556587-40c30e26-d562-4aa4-8549-fe8b6996a440.png">
+      - cat deployment.yaml
+      - kubectl create -f deployment.yaml
+      - kubectl get deployment
+      - kubectl get pods
+      - kubectl describe deployment myapp-deployment
+      - kubectl get all
 
-    #### Coding Exercise
+      #### Coding Exercise
 
-    - this contains coding excercise
+      - this contains coding excercise
 
-      - Deployment - 1
+        - Deployment - 1
 
-        - Introduction: Let us start with Deployments! Given a deployment-definition.yml file. We are only getting started with it, so let's get it populated.
-        - Instruction: Add all the root level properties to it. Note: Only add the properties, not any values yet
+          - Introduction: Let us start with Deployments! Given a deployment-definition.yml file. We are only getting started with it, so let's get it populated.
+          - Instruction: Add all the root level properties to it. Note: Only add the properties, not any values yet
 
-      - Deployment - 2
+        - Deployment - 2
 
-        - Introduction: Let us now add values for Deployment. Deployment is under apiVersion apps/v1
-        - Instruction: Update values for apiVersion and kind
+          - Introduction: Let us now add values for Deployment. Deployment is under apiVersion apps/v1
+          - Instruction: Update values for apiVersion and kind
 
-      - Deployment - 3
+        - Deployment - 3
 
-        - Introduction: Let us now add values for metadata
-        - Instruction: Name the Deployment frontend. And add labels app=>mywebsite and tier=> frontend
+          - Introduction: Let us now add values for metadata
+          - Instruction: Name the Deployment frontend. And add labels app=>mywebsite and tier=> frontend
 
-      - Deployment - 4
+        - Deployment - 4
 
-        - Introduction: Let us now get to the specification
-        - Instruction: The spec section for Deployment has 3 fields: replicas, template and selector. Simply add these properties. Do not add any values.
+          - Introduction: Let us now get to the specification
+          - Instruction: The spec section for Deployment has 3 fields: replicas, template and selector. Simply add these properties. Do not add any values.
 
-      - Deployment - 5
+        - Deployment - 5
 
-        - Instruction: Let us update the number of replicas to 4.
+          - Instruction: Let us update the number of replicas to 4.
 
-      - Deployment - 6
+        - Deployment - 6
 
-        - Introduction: The template section expects a Pod definition. Luckily, we have the one we created in the previous set of exercises. Next to the deployment-definition.yml you will now find the same pod-definition.yml file that you created before.
-        - Instruction: Let us now copy the contents of the pod-definition.yml file, except for the apiVersion and kind and place it under the template section. Take extra care on moving the contents to the right so it falls under template
+          - Introduction: The template section expects a Pod definition. Luckily, we have the one we created in the previous set of exercises. Next to the deployment-definition.yml you will now find the same pod-definition.yml file that you created before.
+          - Instruction: Let us now copy the contents of the pod-definition.yml file, except for the apiVersion and kind and place it under the template section. Take extra care on moving the contents to the right so it falls under template
 
-      - Deployment - 7
+        - Deployment - 7
 
-        - Introduction: Let us now link the pods to the Deployment by updating selectors.
-        - Instruction: Add a property "matchLabels" under selector and copy the labels defined in the pod-definition under it.
-        - Note: this may not work in play-with-k8s as it runs on 1.8 version of kubernetes
+          - Introduction: Let us now link the pods to the Deployment by updating selectors.
+          - Instruction: Add a property "matchLabels" under selector and copy the labels defined in the pod-definition under it.
+          - Note: this may not work in play-with-k8s as it runs on 1.8 version of kubernetes
 
-      - <img width="418" alt="image" src="https://user-images.githubusercontent.com/57224583/219558965-495b8b4f-4bed-47ed-b926-f6e6bfcd4ca7.png">
+        - <img width="418" alt="image" src="https://user-images.githubusercontent.com/57224583/219558965-495b8b4f-4bed-47ed-b926-f6e6bfcd4ca7.png">
+
+      #### Rollout & Versioning
+
+      - <img width="428" alt="image" src="https://user-images.githubusercontent.com/57224583/219560519-8edbc098-ef10-490b-a608-bb2860b1550b.png">
+
+        - Whenever you create a new deployment or upgrade the images in an existing deployment it triggers a Rollout. A rollout is the process of gradually deploying or upgrading your application containers. When you first create a deployment, it triggers a rollout. A new rollout creates a new Deployment revision. Let’s call it revision 1. In the future when the application is upgraded – meaning when the container version is updated to a new one – a new rollout is triggered and a new deployment revision is created named Revision 2. This helps us keep track of the changes made to our deployment and enables us to rollback to a previous version of deployment if necessary.
+
+          - <img width="393" alt="image" src="https://user-images.githubusercontent.com/57224583/219560735-d93fcf7f-26b6-4583-9e7a-76861934bb17.png">
+
+        - <img width="416" alt="image" src="https://user-images.githubusercontent.com/57224583/219561074-fcd2bf90-d349-4cf9-b3f3-fedf65831493.png">
+
+          - There are two types of deploymentstrategies. Say for example you have 5 replicas of your web application instance deployed. One way to upgrade these to a newer version is to destroy all of these and then create newer versions of application instances. Meaning first, destroy the 5 running instances and then deploy 5 new instances of the new application version. The problem with this as you can imagine, is that during the period after the older versions are down and before any newer version is up, the application is down and inaccessible to users. This strategy is known as the Recreate strategy, and thankfully this is NOT the default deployment strategy.
+
+          - The second strategy is were we do not destroy all of them at once. Instead we take down the older version and bring up a newer version one by one. This way the application never goes down and the upgrade is seamless. Remember, if you do not specify a strategy while creating the deployment, it will assume it to be Rolling Update. In other words, RollingUpdate is the default Deployment Strategy
+
+            - <img width="430" alt="image" src="https://user-images.githubusercontent.com/57224583/219561350-92b8904d-2ded-4344-b0b7-e4aefe4a00cd.png">
+
+        - Differnce B/w the recreate and rollingupdate
+
+          - The difference between the recreate and rollingupdate strategies can also be seen when you view the deployments in detail. Run the kubectl describe deployment command to see detailed information regarding the deployments. You will notice when the Recreate strategy was used the eventsindicate that the old replicaset was scaled down to 0 first and the new replica set scaled up to 5. However when the RollingUpdate strategy was used the old replica set was scaled down one at a time simultaneously scaling up the new replica set one at a time.
+
+        - Upgrades
+
+          - <img width="377" alt="image" src="https://user-images.githubusercontent.com/57224583/219562220-8adbeb9c-97a4-4c37-b3a0-fd971b63e22d.png">
+
+          - When a new deployment is created, say to deploy 5 replicas, it first creates a Replicaset automatically, which in turn creates the number of PODs required to meet the number of replicas. When you upgrade your application as we saw in the previous slide, the kubernetes deployment object creates a NEW replicaset under the hoods and starts deploying the containers there. At the same time taking down the PODs in the old replica-set following a RollingUpdate strategy.
+
+          - This can be seen when you try to list the replicasets using the kubectl get replicasets command. Here we see the old replicaset with 0 PODs and the new replicaset with 5 PODs.
+
+        - Rollback
+
+          - <img width="386" alt="image" src="https://user-images.githubusercontent.com/57224583/219562414-f1241474-1303-49ad-8fbb-5dd710685202.png">
+
+          - Say for instance once you upgrade your application, you realize something isn’t very right. Something’s wrong with the new version of build you used to upgrade. So you would like to rollback your update. Kubernetes deployments allow you to rollback to a previous revision. To undo a change run the command kubectl rollout undo followed by the name of the deployment. The deployment will then destroy the PODs in the new replicaset and bring the older ones up in the old replicaset. And your application is back to its older format.
+
+          - When you compare the output of the kubectl get replicasets command, before and after the rollback, you will be able to notice this difference. Before the rollback the first replicaset had 0 PODs and the new replicaset had 5 PODs and this is reversed after the rollback is finished.
+
+        - All the Commands
+
+          - <img width="374" alt="image" src="https://user-images.githubusercontent.com/57224583/219562638-3f5c4bd0-8c6e-4a64-b21c-7190f1e0767c.png">
+
+          - To summarize the commands real quick, use the kubectl create command to create the deployment, get deployments command to list the deployments, apply and set image commands to update the deployments, rollout status command to see the status of rollouts and rollout undo command to rollback a deployment operation.
+
+      #### Demo for update and rollback
+
+      - <img width="602" alt="image" src="https://user-images.githubusercontent.com/57224583/219565212-da184b48-a0f3-41e5-b026-e4a43fd82467.png">
+
+        - kubectl create -f deployment.yaml
+        - kubectl rollout status deployment.apps/myapp-deployment
+        - kubectl delete deployment myapp-deployment
+        - kubectl create -f deployment.yaml
+        - kubectl rollout status deployment.apps/myapp-deployment
+        - kubectl rollout history deployment.apps/myapp-deployment
+        - kubectl delete deployment myapp-deployment
+        - kubectl create -f deployment.yaml --record
+        - kubectl rollout status deployment.apps/myapp-deployment
+        - kubectl rollout history deployment.apps/myapp-deployment
+        - kubectl describe deployment myapp-deployment
+          - see in the annotation section
+          - let's change the image to see the rollout status again
+        - kubectl edit deployment myapp-deployment --record
+          - change the image nginx to nginx:1.18
+        - kubectl rollout status deployment.apps/myapp-deployment
+
+          - <img width="595" alt="image" src="https://user-images.githubusercontent.com/57224583/219567234-554e4f9d-6c16-4ae0-8c4b-7cf15df20ad0.png">
+
+        - kubectl describe deployment myapp-deployment
+          - check events
+        - kubectl set image deployment myapp-deployment nginx=nginx:1.18-perl --record
+        - kubectl rollout status deployment.apps/myapp-deployment
+          - <img width="593" alt="image" src="https://user-images.githubusercontent.com/57224583/219568535-ea36bc2d-1b9a-4af6-97a6-bcc00d33e9bb.png">
+        - kubectl rollout history deployment.apps/myapp-deployment
+          - let's move to older version
+        - kubectl rollout undo deployment myapp-deployment
+
+  ## Networking in Kubernetes
