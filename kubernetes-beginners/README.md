@@ -54,7 +54,7 @@
 
   - The kubectl run command is used to deploy an application on the cluster. The kubectl cluster-info command is used to view information about the cluster and the kubectl get pod command is used to list all the nodes part of the cluster. That’s all we need to know for now and we will keep learning more commands throughout this course. We will explore more commands with kubectl when we learn the associated concepts.For now just remember the run, cluster-info and get nodes commands and that will help us get through the first few labs.
 
-## Kubernetes Setup
+## Kubernetes Setup (under newly created ubuntu VM ONLY)
 
 - Master node
 
