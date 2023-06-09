@@ -54,9 +54,76 @@
   - We have different controllers that take care of different functionslike the node controller, replication controller, et cetera.
   - We have the Kube API server that is responsible for orchestrating all operations within the cluster. On the worker node, we have the kubelet that listens for instructions from the Kube API server and manages containers and the Kube Proxy that helps in enabling communicationbetween services within the cluster.
 
+- Master (Manage, PLan, Schedule, Monitor Nodes)
+  - ETCD Cluster
+  - Kuber-apiserver
+  - Kube Controller Manager
+  - Kube Scheduller
+
+- Worker Node (Host Application as a containers)
+  - Kubelet
+  - kube-proxy
+  - Container runtime engine (cre)
+    - supports Docker and Rocket
+
 ### 12. Docker-vs-ContainerD
 
 - https://kodekloud.com/blog/docker-vs-containerd/
 - https://www.knowledgehut.com/blog/devops/docker-vs-containerd
 - https://blog.purestorage.com/purely-informational/containerd-vs-docker-whats-the-difference/
 - https://earthly.dev/blog/containerd-vs-docker/
+- https://containerd.io/
+- https://www.docker.com/blog/what-is-containerd-runtime/
+
+- CLI-CTR
+  - this is solely made for debugging containerd.
+  - not to manage container or create
+  - ![MicrosoftTeams-image (2)](https://github.com/nayanrajani/Personal/assets/57224583/3e02dedd-fe51-454a-9acc-01ab1b1fced7)
+  - ![MicrosoftTeams-image (2)](https://github.com/nayanrajani/Personal/assets/57224583/3e02dedd-fe51-454a-9acc-01ab1b1fced7)
+
+- CLI-nerdctl
+  - ![MicrosoftTeams-image (4)](https://github.com/nayanrajani/Personal/assets/57224583/d1d95dc3-f895-4bf5-857c-aa7be89b45e0)
+  - ![MicrosoftTeams-image (5)](https://github.com/nayanrajani/Personal/assets/57224583/4fad29c0-1566-4fe1-b9b9-c4b96c5f11e0)
+
+- CLI-crictl
+  - ![MicrosoftTeams-image (6)](https://github.com/nayanrajani/Personal/assets/57224583/24ca84ee-c6df-4bcc-bed6-0631a33429ef)
+  - ![MicrosoftTeams-image (7)](https://github.com/nayanrajani/Personal/assets/57224583/1744d7eb-e5c1-4803-9e8a-0a5cf0581555)
+
+- Docker vs crictl
+  - ![MicrosoftTeams-image (8)](https://github.com/nayanrajani/Personal/assets/57224583/5feb155a-fd82-44b1-85f6-2f5758ce562e)
+  - ![MicrosoftTeams-image (9)](https://github.com/nayanrajani/Personal/assets/57224583/34a67d5d-d39f-4ef5-9841-47e31e6f7e6f)
+
+- ![MicrosoftTeams-image (2)](https://github.com/nayanrajani/Personal/assets/57224583/023f46f7-c119-4232-b689-655360738735)
+
+### 13. ETCD For Beginners
+
+- Objectives
+  - What is ETCD
+    - ETCD is distributed reliable key-value store that is simple, secure & fast.
+  - What is key-value store?
+    - traditional way of storing data was in a row and column table like sql.
+    - but key-value is a nosql type.
+    - it stores data in form of document/files.
+  - How to get Started quickly?
+    - Download binaries
+    - extract
+    - run etcd service
+      - ./etcd
+  - How to operate ETCD?
+    - run etcd service
+      - ./etcd
+        - it start to listen at port 2379 by default.
+      - etcdctl is a cli to store and retrive data in a key-value pair.
+        - ./etcdctl set key1 value1
+        - ./etcdctl get key1
+    - ./etcdctl --version
+
+  - Later:
+    - What is a distributed system?
+    - how ETCD Operates
+    - RAFT Operates
+    - Best Practice on number of nodes
+
+### 14. ETCD in Kubernetes
+
+- 
