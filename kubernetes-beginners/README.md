@@ -85,6 +85,10 @@
 - https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/
 - https://kubernetes.io/docs/concepts/
 
+- with Kubernetes, our ultimate aim is to deploy our application in the form of containers on a set of machines that are configured as worker nodes in a cluster.
+- However, Kubernetes does not deploy containers directly on the worker nodes.
+- The containers are encapsulated into a Kubernetes object known as pods. A pod is a single instance of an application. A pod is the smallest object that you can create in Kubernetes.
+
 - Master-node
   - kubectl run nginx --image=nginx
   - kubectl get pods

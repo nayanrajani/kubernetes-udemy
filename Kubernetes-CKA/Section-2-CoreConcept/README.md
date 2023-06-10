@@ -231,3 +231,106 @@
 - view running resources
   - ps -aux | grep kube-scheduler
 
+### 19. Kubelet
+
+- Kubelet is like a captian on the ship, who leads all the activities.
+
+- Register the Node
+- Create PODs
+- Monitor Pods & Nodes
+
+- Kubeadm doesnot deploy kubelets
+- view running resources
+  - ps -aux | grep kubelet
+
+### 20. Kube Proxy
+
+- in kubernetes cluster every pod can reach every other pod.
+- this is done by a POD networking section
+- Kube-proxy is a process that runs on each Node in kubernetes cluster.
+- it's service is to point the newly created service to communicate.
+
+- Without kubeadm
+  - download binaries
+  - run it as a service
+
+- with kubeadm
+  - it will directly run into a POD
+  - kubectl get daemonset -n kube-system
+
+### 21. Recap - Pods
+
+- Before we head into understanding PODs, we would like to assume that the following have been setup already. At this point, we assume that the application is already developed and built into Docker Images and it is availalble on a Docker repository like Docker hub, so kubernetes can pull it down. We also assume that the Kubernetes cluster has already been setup and is working. This could be a single-node setup or a multi-node setup, doesn’t matter. All the services need to be in a running state.
+
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/
+- https://kubernetes.io/docs/concepts/
+
+- with Kubernetes, our ultimate aim is to deploy our application in the form of containers on a set of machines that are configured as worker nodes in a cluster.
+- However, Kubernetes does not deploy containers directly on the worker nodes.
+- The containers are encapsulated into a Kubernetes object known as pods. A pod is a single instance of an application. A pod is the smallest object that you can create in Kubernetes.
+
+### 22. Pods with YAML
+
+- Kubernetes uses YAML files as input for the creation of objects such as PODs, Replicas, Deployments, services etc. All of these follow similar structure. A kubernetes definition file always contains 4 top level fields. The apiVersion, kind, metadata and spec. These are top level or root level properties. Think of them as siblings, children of the same parent. These are all REQUIRED fields, so you MUST have them in your configuration file.
+
+  - ![20230216_133338](https://user-images.githubusercontent.com/57224583/219305923-fafd2740-c218-4972-815e-e3438516c202.jpg)
+  - Let us look at each one of them.
+    - The first one is the apiVersion.
+      - This is the version of the kubernetes API we’re using to create the object. Depending on what we are trying to create we must use the RIGHT apiVersion. For now since we are working on PODs, we will set the apiVersion as v1. Few other possible values for this field are apps/v1beta1, extensions/v1beta1 etc. We will see what these are for later in this course.
+    - Next is the kind.
+      - The kind refersto the type of object we are trying to create, which in this case happens to be a POD. So we will set it as Pod. Some other possible values here could be ReplicaSet or Deployment or Service, which is what you see in the kind field in the table on the right.
+    - The next is metadata.
+      - The metadata is data about the object like its name, labels etc. As you can see unlike the first two were you specified a string value, this, is in the form of a dictionary. So everything under metadata is intended to the right a little bit and so names and labels are children of metadata. The number of spaces before the two properties name and labels doesn’t matter, but they should be the same as they are siblings. In this case labels has more spaces on the left than name and so it is now a child of the name property instead of a sibling. Also the two properties must have MORE spaces than its parent, which is metadata, so that its intended to the right a little bit. In this case all 3 have the same number of spaces before them and so they are all siblings, which is not correct. Under metadata, the name is a string value – so you can name your POD myapp-pod - and the labels is a dictionary. So labels is a dictionary within the metadata dictionary. And it can have any key and value pairs as you wish. For now I have added a label app with the value myapp. Similarly you could add other labels as you see fit which will help you identify these objects at a later point in time. Say for example there are 100s of PODs running a front-endapplication, and 100’s of them running a backend application or a database, it will be DIFFICULT for you to group these PODs once they are deployed. If you label them now as front-end, back-end or database, you will be able to filter the PODs based on this label at a later point in time.
+      - It’s IMPORTANT to note that under metadata, you can only specify name or labels or anything else that kubernetes expects to be under metadata. You CANNOT add any other property as you wish under this. However, under labels you CAN have any kind of key or value pairs as you see fit. So its IMPORTANT to understand what each of these parameters expect.
+    - So far we have only mentioned the type and name of the object we need to create which happens to be a POD with the name myapp-pod, but we haven’t really specified the container or image we need in the pod.
+    - The last section in the configuration file is the specification which is written as spec.
+      - Depending on the object we are going to create, this is were we provide additional information to kubernetes pertaining to that object. This is going to be different for different objects, so its important to understand or refer to the documentation section to get the right format for each. Since we are only creating a pod with a single container in it, it is easy. Spec is a dictionary so add a property under it called containers, which is a list or an array. The reason this property is a list is because the PODs can have multiple containers within them as we learned in the lecture earlier. In this case though, we will only add a single item in the list, since we plan to have only a single container in the POD. The item in the list is a dictionary, so add a name and image property. The value for image is nginx.
+  - Once the file is created, run the command kubectl create -f followed by the file name
+    which is pod-definition.yml and kubernetes creates the pod.
+    So to summarize remember the 4 top level properties. apiVersion, kind, metadata
+    and spec. Then start by adding values to those depending on the object you are
+    creating.
+    - ![20230216_133412](https://user-images.githubusercontent.com/57224583/219306005-a3b3c18b-d0d3-4540-8456-11885f7a78e5.jpg)
+
+  - Demo
+    - vi pod.yaml
+      - Check yaml folder
+      - ![20230216_140608](https://user-images.githubusercontent.com/57224583/219311648-46f9e264-7180-4f66-9428-500f7a30e2cc.jpg)
+    - cat pod.yaml
+    - kubectl apply -f pod.yaml
+    - kubectl get pods
+    - kubectl describe pod (podname)
+  - Tips & Tricks
+    - Extension for VSCode
+      - Kubernetes support
+      - Yaml by RedHat
+
+### 29. Recap - ReplicaSets
+
+- Replication Controllers
+
+  - Controllers are the brain behind Kubernetes. They are processes that monitor kubernetes objects and respond accordingly.
+
+  - It’s important to note that there are two similar terms. Replication Controller and Replica Set. Both have the same purpose but they are not the same. Replication Controller is the older technology that is being replaced by Replica Set. Replica set is the new recommended way to setup replication. However, whatever we discussed in the previous few slides remain applicable to both these technologies. There are minor differences in the way each works and we will look at that in a bit.
+
+  - <img width="429" alt="image" src="https://user-images.githubusercontent.com/57224583/219348839-d18013fc-bd6b-4d88-bbc0-593e74acbea6.png">
+
+- ReplicaSet
+
+  - The apiVersion though is a bit different. It is apps/v1 which is different from what we had before for replication controller.
+  - The kind would be ReplicaSet and we add name and labels in metadata.
+  
+  - ![MicrosoftTeams-image (1)](https://user-images.githubusercontent.com/57224583/219351093-0f465160-5cd1-4302-8724-70c6afc2fade.png)
+
+  - Labels and Selectors
+
+    - <img width="424" alt="image" src="https://user-images.githubusercontent.com/57224583/219351761-6b633d21-17a1-40ac-87b3-2a2f87164f42.png">
+
+  - Scale
+    - <img width="426" alt="image" src="https://user-images.githubusercontent.com/57224583/219352703-f0e1febb-4660-4011-87d1-45601c5916d0.png">
+
+  - Commands
+
+    - <img width="388" alt="image" src="https://user-images.githubusercontent.com/57224583/219352975-d65a05cb-9e50-46f0-b535-412dd1614909.png">
+
+### 32. Deployments
