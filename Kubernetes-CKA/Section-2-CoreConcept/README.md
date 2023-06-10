@@ -126,4 +126,108 @@
 
 ### 14. ETCD in Kubernetes
 
-- 
+- ETCD stores the following:
+  - Nodes
+  - PODs
+  - Configs
+  - Secrets
+  - Accounts
+  - Roles
+  - Bindings
+  - Others
+
+- the changes for the above only considered stored in ETCD when the chnages are successfull.
+
+- There are two ways to deploy the ETCD in Kubernetes
+  - From Scratch
+    - Download Binaries
+    - define etcd.service
+  - Kubeadm tool
+    - it deploys in a pod as a kube-system namespace
+    - to get all the keys in pod
+      = kubectl exec etcd-master -n kube-system etcdctl get / --prefix -keys-only
+
+### 16. Kube-API Server
+
+- Primary management component in kubernetes
+- Create a pod
+  - Authenticate User
+  - Validate User
+  - Retrieve data
+  - update ETCD
+  - scheduler
+  - kubelet
+
+- Kube-api is the only service that interact with ETCD data store
+
+- View api server option
+  - service
+    - cat /etc/systemd/system/kube
+  - running
+    - ps -aux | grep kube-apiserver
+
+- view api-server kubeadm
+  - kubectl get pods -n kube-system
+
+### 17. Kube Controller Manager
+
+- controller continously monitors the state of various components and works towards to bring the service in the desired functionng state.
+- it is like a manager
+- focus on
+  - watch status
+  - remediate situation
+
+- Controllers
+  - Node-controllers
+    - check the nodes health
+    - node monitor period = 5s
+    - node monitor grace period = 40s (then unreachable)
+    - POD Eviction Timeout = 5M (if doesn't comes up in 5M then it will create a new POD, if it has replicaset)
+  - Replication-Controller
+    - Responsible to monitor replicaset
+    - to keep the desired number of replicaset up and running.
+  - PV-Binder-Controller
+  - Stateful-Set
+  - Replicaset
+  - Service-Account-Controller
+  - CronJob
+  - Deployment-Controller
+  - Namespace-Controller
+  - Endpoint-Controller
+
+- These all controllers are packaged under the "Kube-Controller-Manager"
+- Install binaries from kubernetes page
+- run it as a service
+
+- View with Kubeadm (installed as a pod)
+  - kubectl get pods -n kube-system
+
+- view withoud kubeadm
+  - cat /etc/systemd/system/kube-controller-manager.service
+
+- view running process
+  - ps -aux | grep kube-controller-manager
+
+### 18. Kube Scheduler
+
+- kube-scheduler only responsible to decide which pod goes on which node
+- why do we need scheduler
+  - when there are many ships and many containers, we wanna make sure the right container lands on a right ship.
+  - there can be of different sizes, destinations and capacity.
+
+- Two phases to identify the best scheduler for the POD
+  - Filter Nodes
+    - to filter out the profiles which do not fit the profile foor the POD
+  - Ranks Nodes (runs a priority function)
+    - Ranks the best nodes first according to the POD requirement
+
+- Without kubeadm
+  - download binaries
+  - run it as a service
+
+- with kubeadm
+  - it will directly run into a POD
+
+- view running resources
+  - ps -aux | grep kube-scheduler
+
