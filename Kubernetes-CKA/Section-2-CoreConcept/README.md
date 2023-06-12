@@ -354,4 +354,161 @@
 
 ### 36. Services
 
-- 
+- Enable communication between various components within and outside of the application.
+
+- Service helps us connect applications together or users.
+
+- <img width="386" alt="image" src="https://user-images.githubusercontent.com/57224583/219602877-fdfd15cb-5ad2-4475-a1f5-6a795025a4bd.png">
+
+    - Kubernetes Services enable communication between various components within and outside of the application. Kubernetes Services helps us connect applications together with other applications or users. For example, our application has groups of PODs running various sections, such as a group for serving front-end load to users, another group running back-end processes, and a third group connecting to an external data source. It is Services that enable connectivity between these groups of PODs. Services enable the front-end application to be made available to users, it helps communication between back-end and front-end PODs, and helps in establishing connectivity to an external data source. Thus services enable loose coupling between microservices in our application.
+
+- ![etc](https://user-images.githubusercontent.com/57224583/219603870-b5a6fe30-ec50-4ae5-8122-b34d9fe055f1.png)
+
+- Service types
+
+  - <img width="356" alt="image" src="https://user-images.githubusercontent.com/57224583/219604100-db085ea3-fdb0-4359-81f4-917da1e9e694.png">
+
+    - NodePort
+
+      - <img width="367" alt="image" src="https://user-images.githubusercontent.com/57224583/219604379-2eeb57c0-d74c-4975-ac88-83ecb870921a.png">
+
+      - <img width="352" alt="image" src="https://user-images.githubusercontent.com/57224583/219605836-26cec7f4-2e81-4e33-842a-3e4801067c95.png">
+
+        - If you look at it, there are 3 ports involved. The port on the POD were the actual web server is running is port 80. And it is referred to as the targetPort, because that is were the service forwards the requests to. The second port is the port on the service itself. It is simply referred to as the port. Remember, these terms are from the viewpoint of the service. The service is in fact like a virtual server inside the node. Inside the cluster it has its own IP address. And that IP address is called the Cluster-IP of the service. And finally we have the port on the Node itself which we use to access the web server externally. And that is known as the NodePort. As you can see it is 30008. That is because NodePorts can only be in a valid range which is from 30000 to 32767.
+
+      - <img width="425" alt="image" src="https://user-images.githubusercontent.com/57224583/219605934-b1b06d48-cd2e-4601-bc24-cc6724d414df.png">
+
+      - Let us now look at how to create the service. Just like how we created a Deployment, ReplicaSet or Pod, we will use a definition file to create a service. The high level structure of the file remains the same. As before we have apiVersion,kind, metadata and spec sections. The apiVersion is going to be v1. The kind is ofcourse service. The metadata will have a name and that will be the name of the service. It can have labels, but we don’t need that for now. Next we have spec. and as always this is the most crucial part of the file as this is were we will be defining the actual services and this is the part of a definition file that differs between different objects. In the spec section of a service we have type and ports. The type refers to the type of service we are creating. As discussed before it could be ClusterIP, NodePort, or loadBalancer. In this case since we are creating a NodePort we will set it as NodePort. The next part of spec is ports. This is were we input information regarding what we discussed on the left side of this screen. The first type of port is the targetPort, which we will set to 80. The next one is simply port, which is the port on the service object and we will set that to 80 as well. The third is NodePort which we will set to 30008 or any number in the valid range. Remember that out of these, the only mandatory field is port . If you don’t provide a targetPort it is assumed to be the same as port and if you don’t provide a nodePort a free port in the valid range between 30000 and 32767 is automatically allocated. Also note that portsis an array.
+
+      - So note the dash under the ports section that indicate the first element in the array. You can have multiple such port mappings within a single service. So we have all the information in, but something is really missing. There is nothing here in the definition file that connects the service to the POD. We have simply specified the targetPort but we didn’t mention the targetPort on which POD. There could be 100s of other PODs with web services running on port 80. So how do we do that? As we did with the replicasets previously and a technique that you will see very often in kubernetes, we will use labels and selectors to link these together. We know that the POD was created with a label. We need to bring that label into this service definition file.
+
+    - ![etc (2)](https://user-images.githubusercontent.com/57224583/219610474-846c40b9-fb65-4ccd-9ebb-74a8407a6dde.png)
+
+      - So we have a new property in the spec section and that is selector. Under the selector provide a list of labels to identify the POD. For this refer to the poddefinition file used to create the POD. Pull the labels from the pod-definition file and place it under the selector section. This links the service to the pod. Once done create the service using the kubectl create command and input the service-definition file and there you have the service created.To see the created service, run the kubectl get services command that lists the services, their cluster-ip and the mapped ports. The type is NodePort as we created and the port on the node automatically assigned is 32432. We can now use this port to access the web service using curl or a web browser.
+
+    - <img width="313" alt="image" src="https://user-images.githubusercontent.com/57224583/219612207-8ab8f8be-7158-4d93-a692-f8fa83801864.png">
+
+      - So far we talked about a service mapped to a single POD. But that’s not the case all the time, what do you do when you have multiple PODs? In a production environment you have multiple instances of your web application running for highavailability and load balancing purposes. In this case we have multiple similar PODs running our web application. They all have the same labels with a key app set to value myapp. The same label is used as a selector during the creation of the service. So when the service is created, it looks for matching PODs with the labels and finds 3 of them. The service then automatically selects all the 3 PODs as endpoints to forward the external requests coming from the user. You don’t have to do any additional configuration to make this happen. And if you are wondering what algorithm it uses to balance load, it uses a random algorithm. Thus the service acts as a built-in load balancer to distribute load across different PODs.
+
+    - <img width="301" alt="image" src="https://user-images.githubusercontent.com/57224583/219612446-8de97e41-3b10-4419-b275-1c8b4da72fc1.png">
+
+      - And finally, lets look at what happens when the PODs are distributed across multiple nodes. In this case we have the web application on PODs on separate nodes in the cluster. When we create a service , without us having to do ANY kind of additional configuration, kubernetes creates a service that spans across all the nodes in the cluster and maps the target port to the SAME NodePort on all the nodes in the cluster. This way you can access your application using the IP of any node in the cluster and using the same port number which in this case is 30008. To summarize – in ANY case weather it be a single pod in a single node, multiple pods on a single node, multiple pods on multiple nodes, the service is created exactly the same without you having to do any additional steps during the service creation. When PODs are removed or added the service is automatically updated making it highly flexible and adaptive. Once created you won’t typically have to make any additional configuration changes.
+
+    - Demo Services
+
+      - check nodeport.yaml
+
+        - <img width="419" alt="image" src="https://user-images.githubusercontent.com/57224583/219614047-c44de236-7f77-4f82-881d-dbd59bbaa0e6.png">
+
+        - vi nodeport.yaml
+        - cat nodeport.yaml
+        - kubectl get svc
+        - curl ip:80
+        - nodeip:30004 (in browser)
+
+### 37. Services Cluster IP
+
+- <img width="297" alt="image" src="https://user-images.githubusercontent.com/57224583/219615530-3da16086-4f6c-4be1-98b0-5021082c83e3.png">
+
+  - A kubernetes service can help us group these PODs together and provide a single interface to access the PODs in a group. For example a service created for the backend PODs will help group all the backend PODs together and provide a single interface for other PODs to access this service. The requests are forwarded to one of the PODs under the service randomly. Similarly, create additionalservices for Redis and allow the backend PODs to access the redis system through this service. This enables us to easily and effectively deploy a microservices based application on kubernetes cluster. Each layer can now scale or move as required without impacting communication between the various services. Each service gets an IP and name assigned to it inside the cluster and that is the name that should be used by other PODs to access the service. This type of service is known as ClusterIP.
+
+  - To create such a service, as always, use a definition file. In the service definition file , first use the default template which has apiVersion, kind, metadata and spec. The apiVersion is v1 , kind is Service and we will give a name to our service – we will call it back-end. Under Specification we have type and ports. The type is ClusterIP. In fact, ClusterIP is the default type, so even if you didn’t specify it, it will automatically assume it to be ClusterIP. Under ports we have a targetPort and port. The target port is the port were the back-end is exposed, which in this case is 80. And the port is were the service is exposed. Which is 80 as well. To link the service to a set of PODs, we use selector.We will refer to the pod-definition file and copy the labels from it and move it under selector. And that should be it. We can now create the service using the kubectl create command and then check its status using the kubectl get services command. The service can be accessed by other PODs using the ClusterIP or the service name.
+
+    - ![MicrosoftTeams-image (2)](https://github.com/nayanrajani/Personal/assets/57224583/3c7c484c-41bc-4a96-9f5f-7e4fd8e683a8)
+
+    - ![MicrosoftTeams-image (3)](https://github.com/nayanrajani/Personal/assets/57224583/66e3b2e2-b76c-49c0-8391-1dbab0e6378d)
+
+### 38. LoadBalancer
+
+- <img width="440" alt="image" src="https://user-images.githubusercontent.com/57224583/219616922-678dacdc-1f23-43d6-b3da-e84591bae5ee.png">
+
+  - What end users really want is a single URL to access the application. For this, you will be required to setup a separate Load Balancer VM in your environment. In this case I deploy a new VM for load balancer purposes and configure it to forward requests that come to it to any of the Ips of the Kubernetes nodes. I will then configure my organizations DNS to point to this load balancer when a user hosts http://myapp.com. Now setting up that load balancer by myself is a tedious task, and I might have to do that in my local or onprem environment. However, if I happen to be on a supported CloudPlatform, like Google Cloud Platform, I could leverage the native load balancing functionalities of the cloud platform to set this up. Again you don’t have to set that up manually, Kubernetes sets it up for you. Kubernetes has built-in integration with supported cloud platforms.
+
+    - <img width="398" alt="image" src="https://user-images.githubusercontent.com/57224583/219620162-836cafa5-a290-40c4-94f5-271c9afa1575.png">
+
+### 41. Namespaces
+
+- In Kubernetes, namespaces provides a mechanism for isolating groups of resources within a single cluster. Names of resources need to be unique within a namespace, but not across namespaces. Namespace-based scoping is applicable only for namespaced objects (e.g. Deployments, Services, etc) and not for cluster-wide objects (e.g. StorageClass, Nodes, PersistentVolumes, etc).
+
+- ![MicrosoftTeams-image (2)](https://github.com/nayanrajani/Personal/assets/57224583/c37cde2a-03d6-4dd0-a349-22d32cbc42c6)
+
+- ![MicrosoftTeams-image (3)](https://github.com/nayanrajani/Personal/assets/57224583/75c37ea2-e8e4-46f9-875d-298ccf0bb9a6)
+
+- ![MicrosoftTeams-image (4)](https://github.com/nayanrajani/Personal/assets/57224583/b4058379-d8eb-4c05-b1c8-ff6ed0ad1e86)
+
+- ![MicrosoftTeams-image (5)](https://github.com/nayanrajani/Personal/assets/57224583/53baf829-a76f-45f9-a300-52c87ceddbd3)
+
+- ![MicrosoftTeams-image (6)](https://github.com/nayanrajani/Personal/assets/57224583/5357141e-e3b6-40af-afe4-fe99620c9d87)
+
+- ![MicrosoftTeams-image (7)](https://github.com/nayanrajani/Personal/assets/57224583/9c201959-7038-4668-9329-9233f2152453)
+
+- ![MicrosoftTeams-image (8)](https://github.com/nayanrajani/Personal/assets/57224583/000184c3-b2ee-402b-869b-d856cb7e8d74)
+
+- ![MicrosoftTeams-image (9)](https://github.com/nayanrajani/Personal/assets/57224583/ca64ff85-0ded-4dd1-a0c1-b2409e3e2d26)
+
+- ![MicrosoftTeams-image (10)](https://github.com/nayanrajani/Personal/assets/57224583/3c2d6482-2438-4e9e-af28-0f6110994c43)
+
+- ![MicrosoftTeams-image (11)](https://github.com/nayanrajani/Personal/assets/57224583/0cafba98-ccac-4a24-9ca1-0a7c4072567f)
+
+  - When to Use Multiple Namespaces
+    - Namespaces are intended for use in environments with many users spread across multiple teams, or projects. For clusters with a few to tens of users, you should not need to create or think about namespaces at all. Start using namespaces when you need the features they provide.
+
+    - Namespaces provide a scope for names. Names of resources need to be unique within a namespace, but not across namespaces. Namespaces cannot be nested inside one another and each Kubernetes resource can only be in one namespace.
+
+    - Namespaces are a way to divide cluster resources between multiple users (via resource quota).
+
+    - It is not necessary to use multiple namespaces to separate slightly different resources, such as different versions of the same software: use labels to distinguish resources within the same namespace.
+
+    - Note: For a production cluster, consider not using the default namespace. Instead, make other namespaces and use those.
+
+  - Initial namespaces
+    - Kubernetes starts with four initial namespaces:
+
+    - default
+      - Kubernetes includes this namespace so that you can start using your new cluster without first creating a namespace.
+    - kube-node-lease
+      - This namespace holds Lease objects associated with each node. Node leases allow the kubelet to send heartbeats so that the control plane can detect node failure.
+    - kube-public
+      - This namespace is readable by all clients (including those not authenticated). This namespace is mostly reserved for cluster usage, in case that some resources should be visible and readable publicly throughout the whole cluster. The public aspect of this namespace is only a convention, not a requirement.
+    - kube-system
+      - The namespace for objects created by the Kubernetes system.
+  - Working with Namespaces
+    - Creation and deletion of namespaces are described in the Admin Guide documentation for namespaces.
+
+    - Note: Avoid creating namespaces with the prefix kube-, since it is reserved for Kubernetes system namespaces.
+  - Viewing namespaces
+    - You can list the current namespaces in a cluster using:
+
+  - kubectl get namespace
+
+  - For example:
+
+    - kubectl run nginx --image=nginx --namespace=<insert-namespace-name-here>
+    - kubectl get pods --namespace=<insert-namespace-name-here>
+      - Setting the namespace preference
+      - You can permanently save the namespace for all subsequent kubectl commands in that context.
+    - kubectl config set-context --current --namespace=<insert-namespace-name-here>
+  
+  - Validate it
+    - kubectl config view --minify | grep namespace:
+
+  - Namespaces and DNS
+    - When you create a Service, it creates a corresponding DNS entry. This entry is of the form <service-name>.<namespace-name>.svc.cluster.local, which means that if a container only uses <service-name>, it will resolve to the service which is local to a namespace. This is useful for using the same configuration across multiple namespaces such as Development, Staging and Production. If you want to reach across namespaces, you need to use the fully qualified domain name (FQDN).
+
+    - As a result, all namespace names must be valid RFC 1123 DNS labels.
+
+  - Warning:
+    - By creating namespaces with the same name as public top-level domains, Services in these namespaces can have short DNS names that overlap with public DNS records. Workloads from any namespace performing a DNS lookup without a trailing dot will be redirected to those services, taking precedence over public DNS.
+
+    - To mitigate this, limit privileges for creating namespaces to trusted users. If required, you could additionally configure third-party security controls, such as admission webhooks, to block creating any namespace with the name of public TLDs.
+
+  - Not all objects are in a namespace
+    - Most Kubernetes resources (e.g. pods, services, replication controllers, and others) are in some namespaces. However namespace resources are not themselves in a namespace. And low-level resources, such as nodes and persistentVolumes, are not in any namespace.
+
+    - To see which Kubernetes resources are and aren't in a namespace:
+
+  - In a namespace
+    - kubectl api-resources --namespaced=true
+
+  - Not in a namespace
+    - kubectl api-resources --namespaced=false

@@ -555,6 +555,10 @@
 
       - To create such a service, as always, use a definition file. In the service definition file , first use the default template which has apiVersion, kind, metadata and spec. The apiVersion is v1 , kind is Service and we will give a name to our service – we will call it back-end. Under Specification we have type and ports. The type is ClusterIP. In fact, ClusterIP is the default type, so even if you didn’t specify it, it will automatically assume it to be ClusterIP. Under ports we have a targetPort and port. The target port is the port were the back-end is exposed, which in this case is 80. And the port is were the service is exposed. Which is 80 as well. To link the service to a set of PODs, we use selector.We will refer to the pod-definition file and copy the labels from it and move it under selector. And that should be it. We can now create the service using the kubectl create command and then check its status using the kubectl get services command. The service can be accessed by other PODs using the ClusterIP or the service name.
 
+        - ![MicrosoftTeams-image (2)](https://github.com/nayanrajani/Personal/assets/57224583/3c7c484c-41bc-4a96-9f5f-7e4fd8e683a8)
+
+        - ![MicrosoftTeams-image (3)](https://github.com/nayanrajani/Personal/assets/57224583/66e3b2e2-b76c-49c0-8391-1dbab0e6378d)
+
     #### LoadBalancer
 
     - <img width="440" alt="image" src="https://user-images.githubusercontent.com/57224583/219616922-678dacdc-1f23-43d6-b3da-e84591bae5ee.png">
