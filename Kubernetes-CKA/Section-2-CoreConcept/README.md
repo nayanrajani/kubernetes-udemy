@@ -334,3 +334,24 @@
     - <img width="388" alt="image" src="https://user-images.githubusercontent.com/57224583/219352975-d65a05cb-9e50-46f0-b535-412dd1614909.png">
 
 ### 32. Deployments
+
+- <img width="425" alt="image" src="https://user-images.githubusercontent.com/57224583/219555358-d61303a2-486f-40e3-bdc1-c2a196a8c92e.png">
+
+  - Deployment which is a kubernetes object that comes higher in the hierarchy. The deployment provides us with capabilities to upgrade the underlying instances seamlessly using rolling updates, undo changes, and pause and resume changes to deployments.
+
+  - <img width="429" alt="image" src="https://user-images.githubusercontent.com/57224583/219555592-2309a767-a378-4af4-bf01-556abd19f064.png">
+
+  - Demo for Deplyment
+
+    - check deployment.yaml
+      - <img width="239" alt="image" src="https://user-images.githubusercontent.com/57224583/219556587-40c30e26-d562-4aa4-8549-fe8b6996a440.png">
+      - cat deployment.yaml
+      - kubectl create -f deployment.yaml
+      - kubectl get deployment
+      - kubectl get pods
+      - kubectl describe deployment myapp-deployment
+      - kubectl get all
+
+### 36. Services
+
+- 
