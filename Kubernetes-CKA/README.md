@@ -13,7 +13,3 @@
 - There are a set of prerequisite knowledge required such as containers, applications, yammel files, et cetera.
 
 - A lot of topics to discuss, a lot of concepts to cover such as the architecture, networking, load balancing, a variety of monitoring tools, auto scaling, configuration, security storage, et cetera.
-
-## Section-2 - Core Concept
-
-### Core Concept

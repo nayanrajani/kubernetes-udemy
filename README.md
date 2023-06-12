@@ -25,3 +25,12 @@
 - You only need to know the real basics of development on a platform like Python or Node.js.
 
 - This course focuses on topics relevant for a developer such as ConfigMaps,secrets and service accounts,multi container pods, readiness and liveness probes, logging and monitoring, jobs, services, and networking.
+
+### Shortform
+
+- Deployment => deploy
+- Services => svc
+- Namespaces => 
+  - ns
+  - kubectl get pods -n={namespacename}
+- 

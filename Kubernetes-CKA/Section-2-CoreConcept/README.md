@@ -512,3 +512,78 @@
 
   - Not in a namespace
     - kubectl api-resources --namespaced=false
+
+### 44. Imperative vs Declarative
+
+- Now in the infrastructure-as-code world, there are different approaches in managing the infrastructure, and they are classified into imperative and declarative approaches.
+
+- Let's understand these with an analogy.
+- ![MicrosoftTeams-image (5)](https://github.com/nayanrajani/Personal/assets/57224583/21d7fad5-bec0-486e-8637-7d6458b1f343)
+- Imperative
+  - Let's say you want to visit a friend's house located at Street B. Now in the past, you would hire a taxi and give step-by-step instructions to the driver on how to reach the destination, like take right to street B, then take left to go to street C, and then take another left and then right to go to Street D, and stop at the house. Specifying what to do and how to do, more importantly, is the imperative approach.
+
+- Declarative
+  - On the other hand, today, when you book a cab, say through Uber, you just specify the final destination, like drive to Tom's house, and this is the declarative approach.
+
+  - In this case, we're not giving step-by-step instructions. Instead, we're just specifying the final destination. We're declaring the final destination, and the system figures out the right path to reach the destination. Specifying what to do, not how to do, is the declarative approach.
+
+
+- In Kubernetes Way
+- ![MicrosoftTeams-image (4)](https://github.com/nayanrajani/Personal/assets/57224583/6fc964b7-8901-4252-981b-8e77746a4e98)
+
+  - Imperative
+    - In the Kubernetes world, the imperative way of managing infrastructure is using commands like the kubectl run command to create a pod. The kubectl create deployment command to create a deployment.
+    - The kubectl expose command to create a service, to expose a deployment. And the kubectl edit command may be used to edit an existing object. For scaling a deployment or replica set, use the kubectl scale command. And updating the image on a deployment, we use the kubectl set image command
+    - Now we have also used object configuration files to manage objects, such as creating an object using the kubectl create -f command, with the f option to specify the object configuration file. And editing an object using the kubectl replace command. And deleting an object using the kubectl delete command.
+    - All of these are imperative approaches to managing objects in Kubernetes.
+    - We're saying exactly how to bring the infrastructure to our needs by creating, updating, or deleting objects.
+
+    - ![MicrosoftTeams-image (7)](https://github.com/nayanrajani/Personal/assets/57224583/c96eef29-47df-4266-a8f0-6f830d00452f)
+
+    - However, note that there is a difference between the live object and the definition file that you have locally. The change you made using the kubectl edit command is not really recorded anywhere.
+    - After the change is applied, you're only left with your local definition file, which in fact has the old image name in it. In the future, say you or a teammate decide to make a change to this object,unaware that a change was made using the kubectl edit command, when the new change is applied, the previous change to the image is lost. So you can use the kubectl edit command if you are making a change and you're sure that you're not going to rely on the object configuration file in the future.
+    - But a better approach to that is to first edit the local version of the object configuration file, with the required changes, that is, by updating the image name here, and then running the kubectl replace command to update the object.
+
+    - ![MicrosoftTeams-image (6)](https://github.com/nayanrajani/Personal/assets/57224583/235f13e4-c073-45f0-b7fc-5d56258f28df)
+
+    - This way, going forward, the changes made are recorded and can be tracked as part of the change review process. So at times, you may want to completely delete and recreate objects. In such cases, you may run the same command, but with the force option, like this. Now, this is still the imperative approach, because you're still instructed Kubernetes how to create or update these objects. First, you run the kubectl create command to create the object, and then you run the replace command to replace the object, or delete command to delete the object. And what if you run the create command if the object already exists?
+    - Now, then it would fail with an error that says the pod already exists.When you update an object, you should always make sure that the object exists first before running the replace command. If an object does not exist, the replace command fails with an error message. So the imperative approach is very taxing for you as an administrator, as you must always be aware of the current configurations and perform checks to make sure that things are in place before making a change.
+  
+    - ![MicrosoftTeams-image (3)](https://github.com/nayanrajani/Personal/assets/57224583/88ac8991-a0e7-4c71-9fc3-d6ba90ae4d49)
+
+  - Declarative
+    - The declarative approach would be to create a set of files that defines the expected state of the applications and services on a Kubernetes cluster. And with a single kubectl apply command, Kubernetes should be able to read the configuration files and decide by itself what needs to be done to bring the infrastructure to the expected state.
+    - So in the declarative approach, you will run the kubectl apply command for creating, updating, or deleting an object. The apply command will look at the existing configuration and figure out what changes need to be made to the system.
+
+    - The declarative approach is where you use the same object configuration files that we've been working on. But instead of the create or replace commands, we use the kubectl apply command to manage objects. The kubectl apply command is intelligent enough to create an object if it doesn't already exist. If there are multiple object configuration files, as you would usually, then you may specify a directory as the path instead of a single file. That way, all the objects are created at once. Now when changes are to be made, we simply update the object configuration file and run the kubectl apply command again. And this time, it knows that the object exists. And so it only updates the object with the new changes.
+
+    - ![MicrosoftTeams-image (3)](https://github.com/nayanrajani/Personal/assets/57224583/5188fe31-4f81-4125-8241-c575958d6f9a)
+
+    - So it never really throws an error that says the object already exists or the updates cannot be applied. It will always figure out the right approach to updating the object.So going forward, any changes made on the application, whether they are updating images or fields of existing configuration files,or adding new configuration files altogether for new objects, all we do is simply update our local directory  with the changes and then the kubectl apply command take care of the rest.
+
+    - ![MicrosoftTeams-image (2)](https://github.com/nayanrajani/Personal/assets/57224583/730e3f55-3c08-4d2b-872a-571112fdb6fd)
+
+
+- Exam Tip!
+  - ![MicrosoftTeams-image (4)](https://github.com/nayanrajani/Personal/assets/57224583/455fa6e1-1ded-402a-a094-8e300cb387e9)
+
+  - So from an exam perspective, you could use the imperative approach to save time as much as possible.For example, if a question is to just create a pod or a deployment with a given image, then one of these imperative commands can help you achieve that quickly. So it's important to practice the imperative commands. If you need to edit a property of an existing object, then using the kubectl edit command may be the quickest way, right?
+  - If you have a complex requirement, say, for example that requires multiple containers, environment variables, commands, init containers, etc, then using an object configuration file to create the object would be preferred. 
+  - This way, if you see that you made a mistake, you can easily update the file and apply it again.
+  - And using the kubectl apply command in that case would be a better option.
+
+### 48. Kubectl Apply Command
+
+- ![MicrosoftTeams-image (3)](https://github.com/nayanrajani/Personal/assets/57224583/3d621fda-ee5c-4b4a-a382-e9a7c9ca47f1)
+
+- The apply command takes into consideration the local configuration file, the live object definition on Kubernetes, and the last applied configuration before making a decision on what changes are to be made. So when you run the apply command,if the object does not already exist the object is created. When the Object is created, an object configuration, similar to what we created locally is created within Kubernetes but with additional fields to store status of the object. This is the live configuration of the object on the Kubernetes cluster. This is how Kubernetes internally stores information about an object, no matter what approach you use to create the object. But when you use the kubectl apply command
+to create an object, it does something a bit more. The YAML version of the local object configuration file we wrote is converted to a json format, and it is then stored as the last applied configuration.
+- Going forward, for any updates to the object, all the three are compared to identify what changes are
+to be made on the live object. For example, say when the nginX image is updated to 1.19 in our local file and we are on the kubectl apply command, this value is compared with the value in the live configuration.And if there is a difference, the live configuration is updated with the new value. After any change, the last applied json format is always updated to the latest so that it's always up to date.
+- So, why do we then really need the last applied configuration, right? So if a field was deleted, say 
+for example the type label was deleted, and now when we run the kubectl apply command, we see that the last applied configuration had a label but it's not present in the local configuration. This means that the field needs to be removed from the live configuration. So if a field was present in the live configuration and not present in the local or the last applied configuration, then it will be left as is.- But if a field is missing from the local file and it is present in the last applied configuration, so that means that in the previous step, or whenever the last time we ran the kubectl apply command, that particular field was there and it is now being removed. So the last applied configuration helps us figure out what fields have been removed from the local file, right?
+- So that field is then removed from the actual, the live configuration. What we just discussed is available for your reference in detail in the Kubernetes document pages. So follow this link to view that.Okay, so we saw the three sets of files, and we know that the local file is what's stored on our local system. The live object configuration is in the Kubernetes memory. But where is this json file that has the last applied configuration stored? Well, it's stored on the live object configuration on the Kubernetes cluster itself as an annotation named a last applied configuration.
+- So remember that this is only done when you use the apply command. The kubectl create or replace command
+do not store the last applied configuration like this. So you must bear in mind not to mix the imperative and declarative approaches while managing the Kubernetes objects. So once you use the applied command, going forward,whenever a change is made the apply command compares all three sections. The local part definition file, the live object configuration, and the last applied configuration stored within the live object configuration file, for deciding what changes are to be made to the live configuration, similar to what we saw
+
+- ![MicrosoftTeams-image (2)](https://github.com/nayanrajani/Personal/assets/57224583/5c03e84a-b6a1-4316-822c-b657730bb1ef)
