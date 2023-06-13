@@ -175,4 +175,23 @@
 
 ## 71. DaemonSets
 
+- DaemonSets are like ReplicaSets, as in it helps you deploy multiple instances of pods. But it runs one copy of your pod on each node in your cluster. Whenever a new node is added to the cluster, a replica of the pod is automatically added to that node. And when a node is removed the pod is automatically removed. The DaemonSet ensures that one copy of the pod is always present in all nodes in the cluster.
+- So what are some use cases of DaemonSets?
+- Say you would like to deploy a monitoring agent or log collector on each of your nodes in the cluster, so you can monitor your cluster better. A DaemonSet is perfect for that as it can deploy your monitoring agent in the form of a pod in all the nodes in your cluster. Then you don't have to worry about adding or removing monitoring agents from these nodes when there are changes in your cluster as the DaemonSet will take care of that for you.
+- Earlier, while discussing the Kubernetes architecture, we learned that one of the worker node components that is required on every node in the cluster is a kube-proxy. That is one good use case of DaemonSets. The kube-proxy component can be deployed as a DaemonSet in the cluster.
+
+## 74. Static Pods
+
+- Static Pods are managed directly by the kubelet daemon on a specific node, without the API server observing them. Unlike Pods that are managed by the control plane (for example, a Deployment); instead, the kubelet watches each static Pod (and restarts it if it fails).
+
+- Static Pods are always bound to one Kubelet on a specific node.
+
+- The kubelet automatically tries to create a mirror Pod on the Kubernetes API server for each static Pod. This means that the Pods running on a node are visible on the API server, but cannot be controlled from there. The Pod names will be suffixed with the node hostname with a leading hyphen.
+
+  - Note: If you are running clustered Kubernetes and are using static Pods to run a Pod on every node, you should probably be using a DaemonSet instead.
+  - Note: The spec of a static Pod cannot refer to other API objects (e.g., ServiceAccount, ConfigMap, Secret, etc).
+  - Note: Static pods do not support ephemeral containers.
+
+## 77. Multiple Schedulers
+
 - 
