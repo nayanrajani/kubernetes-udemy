@@ -1,5 +1,6 @@
 # kubernetes-udemy
 
+- https://www.geeksforgeeks.org/kubernetes-tutorial/
 ## Kubernetes for Beginner
 
 - The Kubernetes for the Absolute Beginner's course helps a beginner having no prior experience with containers or container orchestration get started with the concepts of Kubernetes.
