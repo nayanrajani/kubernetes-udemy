@@ -1,6 +1,6 @@
-## Section-2 - Core Concept
+# Section-2 - Core Concept
 
-### 11.Cluster Architecture
+## 11.Cluster Architecture
 
 - Master node
   - The master node is responsible for managing the Kubernetes cluster, storing information regarding the different nodes, planning which containers goes where, monitoring the nodes and containers on them, et cetera.
@@ -66,7 +66,7 @@
   - Container runtime engine (cre)
     - supports Docker and Rocket
 
-### 12. Docker-vs-ContainerD
+## 12. Docker-vs-ContainerD
 
 - https://kodekloud.com/blog/docker-vs-containerd/
 - https://www.knowledgehut.com/blog/devops/docker-vs-containerd
@@ -95,7 +95,7 @@
 
 - ![MicrosoftTeams-image (2)](https://github.com/nayanrajani/Personal/assets/57224583/023f46f7-c119-4232-b689-655360738735)
 
-### 13. ETCD For Beginners
+## 13. ETCD For Beginners
 
 - Objectives
   - What is ETCD
@@ -124,7 +124,7 @@
     - RAFT Operates
     - Best Practice on number of nodes
 
-### 14. ETCD in Kubernetes
+## 14. ETCD in Kubernetes
 
 - ETCD stores the following:
   - Nodes
@@ -147,7 +147,7 @@
     - to get all the keys in pod
       = kubectl exec etcd-master -n kube-system etcdctl get / --prefix -keys-only
 
-### 16. Kube-API Server
+## 16. Kube-API Server
 
 - Primary management component in kubernetes
 - Create a pod
@@ -169,7 +169,7 @@
 - view api-server kubeadm
   - kubectl get pods -n kube-system
 
-### 17. Kube Controller Manager
+## 17. Kube Controller Manager
 
 - controller continously monitors the state of various components and works towards to bring the service in the desired functionng state.
 - it is like a manager
@@ -208,7 +208,7 @@
 - view running process
   - ps -aux | grep kube-controller-manager
 
-### 18. Kube Scheduler
+## 18. Kube Scheduler
 
 - kube-scheduler only responsible to decide which pod goes on which node
 - why do we need scheduler
@@ -231,7 +231,7 @@
 - view running resources
   - ps -aux | grep kube-scheduler
 
-### 19. Kubelet
+## 19. Kubelet
 
 - Kubelet is like a captian on the ship, who leads all the activities.
 
@@ -243,7 +243,7 @@
 - view running resources
   - ps -aux | grep kubelet
 
-### 20. Kube Proxy
+## 20. Kube Proxy
 
 - in kubernetes cluster every pod can reach every other pod.
 - this is done by a POD networking section
@@ -258,7 +258,7 @@
   - it will directly run into a POD
   - kubectl get daemonset -n kube-system
 
-### 21. Recap - Pods
+## 21. Recap - Pods
 
 - Before we head into understanding PODs, we would like to assume that the following have been setup already. At this point, we assume that the application is already developed and built into Docker Images and it is availalble on a Docker repository like Docker hub, so kubernetes can pull it down. We also assume that the Kubernetes cluster has already been setup and is working. This could be a single-node setup or a multi-node setup, doesn’t matter. All the services need to be in a running state.
 
@@ -269,7 +269,7 @@
 - However, Kubernetes does not deploy containers directly on the worker nodes.
 - The containers are encapsulated into a Kubernetes object known as pods. A pod is a single instance of an application. A pod is the smallest object that you can create in Kubernetes.
 
-### 22. Pods with YAML
+## 22. Pods with YAML
 
 - Kubernetes uses YAML files as input for the creation of objects such as PODs, Replicas, Deployments, services etc. All of these follow similar structure. A kubernetes definition file always contains 4 top level fields. The apiVersion, kind, metadata and spec. These are top level or root level properties. Think of them as siblings, children of the same parent. These are all REQUIRED fields, so you MUST have them in your configuration file.
 
@@ -305,7 +305,7 @@
       - Kubernetes support
       - Yaml by RedHat
 
-### 29. Recap - ReplicaSets
+## 29. Recap - ReplicaSets
 
 - Replication Controllers
 
@@ -333,7 +333,7 @@
 
     - <img width="388" alt="image" src="https://user-images.githubusercontent.com/57224583/219352975-d65a05cb-9e50-46f0-b535-412dd1614909.png">
 
-### 32. Deployments
+## 32. Deployments
 
 - <img width="425" alt="image" src="https://user-images.githubusercontent.com/57224583/219555358-d61303a2-486f-40e3-bdc1-c2a196a8c92e.png">
 
@@ -352,7 +352,7 @@
       - kubectl describe deployment myapp-deployment
       - kubectl get all
 
-### 36. Services
+## 36. Services
 
 - Enable communication between various components within and outside of the application.
 
@@ -406,7 +406,7 @@
         - curl ip:80
         - nodeip:30004 (in browser)
 
-### 37. Services Cluster IP
+## 37. Services Cluster IP
 
 - <img width="297" alt="image" src="https://user-images.githubusercontent.com/57224583/219615530-3da16086-4f6c-4be1-98b0-5021082c83e3.png">
 
@@ -418,7 +418,7 @@
 
     - ![MicrosoftTeams-image (3)](https://github.com/nayanrajani/Personal/assets/57224583/66e3b2e2-b76c-49c0-8391-1dbab0e6378d)
 
-### 38. LoadBalancer
+## 38. LoadBalancer
 
 - <img width="440" alt="image" src="https://user-images.githubusercontent.com/57224583/219616922-678dacdc-1f23-43d6-b3da-e84591bae5ee.png">
 
@@ -426,7 +426,7 @@
 
     - <img width="398" alt="image" src="https://user-images.githubusercontent.com/57224583/219620162-836cafa5-a290-40c4-94f5-271c9afa1575.png">
 
-### 41. Namespaces
+## 41. Namespaces
 
 - In Kubernetes, namespaces provides a mechanism for isolating groups of resources within a single cluster. Names of resources need to be unique within a namespace, but not across namespaces. Namespace-based scoping is applicable only for namespaced objects (e.g. Deployments, Services, etc) and not for cluster-wide objects (e.g. StorageClass, Nodes, PersistentVolumes, etc).
 
@@ -513,7 +513,7 @@
   - Not in a namespace
     - kubectl api-resources --namespaced=false
 
-### 44. Imperative vs Declarative
+## 44. Imperative vs Declarative
 
 - Now in the infrastructure-as-code world, there are different approaches in managing the infrastructure, and they are classified into imperative and declarative approaches.
 
@@ -572,7 +572,7 @@
   - This way, if you see that you made a mistake, you can easily update the file and apply it again.
   - And using the kubectl apply command in that case would be a better option.
 
-### 48. Kubectl Apply Command
+## 48. Kubectl Apply Command
 
 - ![MicrosoftTeams-image (3)](https://github.com/nayanrajani/Personal/assets/57224583/3d621fda-ee5c-4b4a-a382-e9a7c9ca47f1)
 
