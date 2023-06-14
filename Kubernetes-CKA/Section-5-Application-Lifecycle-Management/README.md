@@ -73,3 +73,49 @@
   - Configuring Secrets
 
 ## 96. Commands
+
+## 97. Commands and Arguments
+
+## 100. Configure Environment Variables in Applications
+
+## 101. Configuring ConfigMaps in Applications
+
+- When you have a lot of pod definition files, itwill become difficult to manage the environment data storedwithin the query's files.
+
+- We can take this information out of the pod definition fileand manage it centrally using configuration maps.Config maps are used to pass configuration datain the form of key value pairs in Kubernetes.
+
+- When a pod is created, inject the config map into the podso the key value pairs are availableas environment variablesfor the application hosted inside the containerin the pod.There are two phases involved in configuring config maps.First, create the config map, and secondinject them into the pod.
+
+- Just like any other Kubernetes object, there are two waysof creating a config map.The imperative way without using a config mapdefinition file, and the declarative way,by using a config map definition file.
+
+- Imperative
+  - If you do not wish to create a config map definition file,you could simply use the Kube control, create configmap command, and specify the required arguments.Let's take a look at that first.
+
+  - With this method,you can directly specify the key valued pairsin the command line.To create a config map of the given values,run the Kube control create config map command.The command is followedby the config name and the option from literal.The from literal option is used to specify thekey value pairs in the command itself.
+
+  - In this example, we are creating a config mapby the name app configwith a key value pair of app color equals blue.If you wish to add additional key value pairs,simply specify the from literal options multiple times.However, this will get complicated whenyou have too many configuration items.Another way to input configuration data is through a file.
+
+  - Use the from file option to specify a pathto the file that contains the required data.The data from this file is read and stored under the nameof the file.
+
+- Declarative
+  - Let us now look at the declarative approach.For this, we create a definition file, just like how we didfor the pod.The file has a apiVersion, kind metadata,and instead of spec, here we have data.The apiVersion is V1, the kind is config map.Under metadata, we specify a name for the config map.
+  
+  - We will call it app config.Under data, and the configuration data,in a key value format.Run the Kube control, create commandand specify the configuration file name.So, that creates the app config, config map with the valueswe specify.You can create as many config mapsas you need in the same way for various different purposes.
+  
+  - Here I have one of my application,other for my SQO and another one for Redis.So, it is important to name the config maps appropriately,as you will be using these names laterwhile associating it with pods.To view config maps, run the Kube controlget config maps command.
+  
+  - This lists the newly created config map named app config.The describe config maps command lists theconfiguration data as well under the data section.Now that we have the config map created
+
+- Inject this data in POD
+
+  - Now that we have the config map created,let us proceed with step two, configuring it with a pod.Here I have a simple pod definition filethat runs my simple web application.
+  
+  - To inject an environment variable,add a new property to the container called ENV from.The ENV from property is a list.So, we can pass as many environment variables as required.Each item in the list corresponds to config map item.Specify the name of the config map we created earlier.
+  
+  - This is how we inject a specific config mapfrom the ones we created before.Creating the pod definition file nowcreates a web application with a blue background.What we just saw was using config maps toinject environment variables.
+  
+  - There are other ways to inject configuration data into pods.You can inject it as a single environment variableor, you can inject the whole data as files in a volume.
+
+## 104. Configure Secrets in Applications
+
+- 
