@@ -56,4 +56,6 @@
 - Namespaces => 
   - ns
   - kubectl get pods -n={namespacename}
-- 
+- ServiceAccount =>
+  - sa
+  - kubectl get sa (name-scheduler) -n {namespacename}
