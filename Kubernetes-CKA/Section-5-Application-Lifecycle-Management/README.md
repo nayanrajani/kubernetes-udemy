@@ -1,5 +1,4 @@
 # Section 5: Application Lifecycle Management
-
 ## 92. Rolling Updates and Rollbacks
 
 - Deployment
@@ -118,4 +117,91 @@
 
 ## 104. Configure Secrets in Applications
 
-- 
+- Secrets are used to store sensitive informationlike passwords or keys.They're similar to ConfigMapsexcept that they're stored in an encoded format.As with ConfigMapsthere are two steps involved in working with secrets.
+
+- First, create the secret and second, inject it into pod.
+
+- There are two ways of creating a secret, the imperative way,without using a secret definition file. And the declarative way,by using a secret definition filewith the imperative method, you can directlyspecify the key value pairs in the command line itself.
+
+- Imperative
+
+  - To create a secret of the given values,run the kubectl, create secret, generic command.
+
+  - The command is followedby the secret name and the option from literal.The from literal option is used to specify thekey value pairs in the command itself.In this example, we are creating a secretby the name app secretwith a key value pair DB_host=MySQL.
+
+  - If you wish to add additional key value pairssimply specify the from literal options multiple times.However, this could get complicated whenyou have too many secrets to pass in.Another way to input the secret data is through a file.
+  
+  - Use the front file option to specify a pathto the file that contains the required data.The data from this file is read and stored under the nameof the file.
+
+- Declarative
+
+  - For this, we create a definition file, just like how we didfor the ConfigMap.The file has API version, kind, metadata and data.The API version is V1, kind is secret.Under metadata, specify the name of the secret.We will call it app secret, under data add the secret datain a key value format.However, one thing we discussed about secrets wasthat they're used to store sensitive data and are storedin an encoded format.Here we have specified the data in plain textwhich is not very safe.
+  
+  - So while creating a secret with a declarative approach,you must specify the secret values in an encoded format.So you must specify the data in an encoded form like this.But how do you convert the datafrom plain text to an encoded format?On a Linux host, run the command echo-n,followed by the text you're trying to convertwhich is my SQL in this case.
+  
+  - And pipe that to the base 64 utility.To view secrets, run the kubectl Get Secrets Command.This lists the newly created secretalong with another secret previously createdby Kubernetes for its internal purposes.To view more information on the newly created secretrun the kubectl, describe secret command.This shows the attributes in the secretbut hides the value themselves.
+  
+  - To view the values as well.Run the kubectl, get secret commandwith the output displayed in a YAML format.Using the dash O option.You can now see the hand coded values as well.Now, how do you decode encoded values?Use the same base 64 command used earlier to encode itbut this time add a decode option to it.
+  
+- Now that we have secret createdlet us proceed with step two, configuring it with a pod.
+
+- Here I have a simple pod definition file that runs my application.To inject an environment variableadd a new property to the container called ENV from.The ENV from property is a listso we can pass as many environment variables as required.
+- Each item in the list corresponds to a secret itemspecify the name of the secret we created earlier.Creating the pod definition file now makes the datain the secret availableas environment variables for the application.What we just saw was injecting secretsas environment variables into the pods.
+
+- There are other ways to inject secrets into pods.You can inject as single environment variablesor inject the whole secret as files in a volume.If you were to mount the secret as a volume in the pod.Each attribute in the secret is createdas a file with the value of the secret as its content.
+
+- In this case, since we have three attributes in our secretthree files are created, and if we look at the contentsof the DB password file, we see the password in it.
+
+- So here are some things to keep
+
+  - ![MicrosoftTeams-image (2)](https://github.com/nayanrajani/Personal/assets/57224583/28af953e-cd62-469f-b5d9-c25b5a86eba5)
+
+### A note about Secrets!
+
+- Remember that secrets encode data in base64 format. Anyone with the base64 encoded secret can easily decode it. As such the secrets can be considered as not very safe.
+
+- The concept of safety of the Secrets is a bit confusing in Kubernetes. The kubernetes documentation page and a lot of blogs out there refer to secrets as a "safer option" to store sensitive data. They are safer than storing in plain text as they reduce the risk of accidentally exposing passwords and other sensitive data. In my opinion it's not the secret itself that is safe, it is the practices around it. 
+
+- Secrets are not encrypted, so it is not safer in that sense. However, some best practices around using secrets make it safer. As in best practices like:
+
+  - Not checking-in secret object definition files to source code repositories.
+
+  - Enabling Encryption at Rest for Secrets so they are stored encrypted in ETCD. 
+
+- Also the way kubernetes handles secrets. Such as:
+
+  - A secret is only sent to a node if a pod on that node requires it.
+
+  - Kubelet stores the secret into a tmpfs so that the secret is not written to disk storage.
+
+- Once the Pod that depends on the secret is deleted, kubelet will delete its local copy of the secret data as well.
+
+- Read about the protections and risks of using secrets here
+
+- Having said that, there are other better ways of handling sensitive data like passwords in Kubernetes, such as using tools like Helm Secrets, HashiCorp Vault.
+
+## 108. Demo: Encrypting Secret Data at Rest
+
+- https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
+
+## 110. Multi Container Pods
+
+- The idea of decoupling a large monolithic applicationinto sub components known as microservicesenables us to develop and deploy a set of independent,small, and reusable code.This architecture can then help us scale up, down,as well as modify each service as required,as opposed to modifying the entire application.
+
+- However, at times, you may need two servicesto work together,such as a web server and a logging service.You need one agent instance per web server instancepaired together.You don't want to mergeand load the code of the tool services,as each of them target different functionalitiesand you would still like them to be developedand deployed separately.
+
+- You only need the two functionality to work together.You need one agent per web server instancepaired together that can scale up and down togetherand that is why you have multi container podsthat share the same life cycle,which means they are created togetherand destroyed together.They share the same network space,which means they can refer to each other as local host,and they have access to the same storage volumes.
+
+- This way you do not have to establish volume sharingor services between the podsto enable communication between them.To create a multi-container pod,add the new container informationto the pod definition file.
+
+- Remember the container section under the spec sectionin a pod definition file is an array,and the reason it is an array,is to allow multiple containers in a single pod.In this case, we add a new container named log agentto our existing pod.
+
+## 113. Multi-container Pods Design Patterns
+
+- There are 3 common patterns, when it comes to designing multi-container PODs. The first and what we just saw with the logging service example is known as a side car pattern. The others are the adapter and the ambassador pattern.
+
+- But these fall under the CKAD curriculum and are not required for the CKA exam. So we will be discuss these in more detail in the CKAD course.
+
+  - ![image](https://github.com/nayanrajani/Personal/assets/57224583/915d43f8-31b2-4bbd-a8f9-ae959c1d3f65)
+
+## 114. InitContainer
