@@ -141,3 +141,99 @@
 - Let's see who does all of this for us.If you look at the Kubernetes control planeyou see the Kube play server, the scheduler,the control manager, and CD server, et cetera.Which of these components is actually responsiblefor all the certificate related operations?All the certificate related operations are carriedout by the controller manager.If you look closely at the controller manager,you will see that it has controllersin it called as CSR approving, CSR signing, et cetera,that are responsible for carrying out these specific tasks.We know that if anyone has to sign certificatesthey need the CA servers route certificate and private key.The Controller Manager service configurationhas two options where you can specify this.
 
 ## 155. KubeConfig
+
+- https://devopscube.com/kubernetes-kubeconfig-file/
+
+## 159. API Groups
+
+- These APIs are categorized into two, the core group and the named group.
+
+- The core group is where all core functionality exists, such as name, spaces, pods, replication controllers, events and points, nodes, bindings, persistent volumes, persistent volume claims, conflict maps, secrets, services, et cetera.
+
+- The named group APIs are more organized and going forward, all the newer features are going to be made available through these named groups. It has groups under it for apps, extensions, networking, storage, authentication, authorization, et cetera. Shown here are just a few. 
+
+- Within apps, you have deployments, replica sets, stateful sets. Within networking, you have network policies. Certificates have these certificate signing requests that we talked about earlier in the section. So the ones at the top are API groups, and the ones at the bottom are resources in those groups.
+
+- Each resource in this has a set of actions associated with them, Things that you can do with these resources, such as list the deployments, get information about one of these deployments, create a deployment, delete a deployment, update a deployment, watch a deployment, et cetera. These are known as verbs.
+
+-The Kubernetes API reference page can tell you what the API group is for each object; select an object, and the first section in the documentation page shows it's group details, v1 core is just v1. You can also view these on your Kubernetes cluster.
+
+- Access your Kube API server at port 6-4-4-3 without any path and it will list you the available API groups. And then, within the named API groups it returns all the supported resource groups. A quick note on accessing the cluster API like that. If you were to access the API directly through cURL as shown here,then you will not be allowed access except for certain APIs like version, as you have not specified any authentication mechanisms. So you have to authenticate to the API using your certificate files by passing them in the command line like this.
+
+- An alternate option is to start a Kube control proxy client. The Kube control proxy command launches a proxy service locally on port 8-0-0-1 and uses credentials and certificates from your Kube config file to access the cluster.
+
+- That way, you don't have to specify those in the cURL command. Now you can access the Kube control proxy service at port 8-0-0-1 and the proxy will use the credentials from Kube config file to forward your request to the Kube API server.
+
+- This will list all available APIs at root.
+
+- So here are two terms that kind of sound the same, The Kube proxy and Kube control proxy. well, they're not the same. We discussed about Kube proxy earlier this course. It is used to enable connectivity between pods and services across different nodes in the cluster. We discuss about Kube proxy in much more detail later in this course. Whereas Kube control proxy is an ACTP proxy service created by Kube control utility to access the Kube API server.
+
+- So what to take away from this?
+
+- All resources in Kubernetes are grouped into different API groups. At the top level, you have core API group and named API group. Under the named API group, you have one for each section. Under these API groups, you have the different resources and each resource has a set of associated actions known as verbs.
+
+## 160. Authorization
+
+- First of all, why do you need authorization in your cluster?
+
+- As an administrator of the clusterwe were able to perform all sorts of operations in it,such as viewing various objects like podsand nodes and deployments,creating or deleting objectssuch as adding or deleting podsor even nodes in the cluster.As an admin, we are able to perform any operationbut soon we will have others accessing the cluster as wellsuch as the other administrators,developers,testersor other applications like monitoring applicationsor continuous delivery applications like Jenkins, et cetera.
+
+- So, we will be creating accounts for themto access the cluster by creating usernamesand passwords or tokens, or signed TL certificatesor service accounts as we saw in the previous lectures.But we don't want all of themto have the same level of access as us.For example, we don't want the developersto have access to modify our cluster configuration,like adding or deleting nodesor the storage or networking configurations.
+
+- We can allow them to view but not modify,but they could have access to deploying applications.The same goes with service accounts,we only want to provide the external applicationthe minimum level of accessto perform its required operations.When we share our cluster between different organizationsor teams, by logically partitioning it using name spaces,we want to restrict access to the usersto their name spaces alone.
+
+- That is what authorization can help you within the cluster.
+
+- There are different authorization mechanismssupported by Kubernetes,such as node authorization,attribute-based authorization,role-based authorization and webhook.
+
+- Node based
+  - Let's just go through these now.We know that the Kube API Server is accessed by userslike us for management purposes,as well as the kubelets on nodewithin the cluster for management processwithin the cluster.
+  
+  - The kubelet accesses the API serverto read information about services and points,nodes, and pods.The kubelet also reports to the Kube API Serverwith information about the node, such as its status.These requests are handled by a special authorizerknown as the Node Authorizer.
+  
+  - In the earlier lectures,when we discussed about certificates,we discussed that the kubeletsshould be part of the system nodes groupand have a name prefixed with system node.So any request coming from a userwith the name system nodeand part of the system nodes groupis authorized by the node authorizer,and are granted these privileges,the privilege is required for a kubelet.So that's access within the cluster.
+
+- attribute-based authorization
+  - Let's talk about external access to the API.For instance, a user.Attribute-based authorizationis where you associate a user or a group of userswith a set of permissions.In this case, we say the dev usercan view, create and delete pods.
+  
+  - You do this by creating a policy filewith a set of policies defined in adjacent format this wayyou pass this file into the API server.Similarly, we create a policy definition filefor each user or group in this file.
+  
+  - Now, every time you need to addor make a change in the security,you must edit this policy file manuallyand restart the Kube API Server.As such, the attribute-based access control configurationsare difficult to manage.
+
+- role-based authorization
+  - Role-based access controls make these much easier.With role-based access controls,instead of directly associating a useror a group with a set of permissions,we define a role, in this case for developers.We create a role with the setof permissions required for developersthen we associate all the developers to that role.
+  
+  - Similarly, create a role for security userswith the right set of permissions required for themthen associate the user to that role.Going forward, whenever a changeneeds to be made to the user's accesswe simply modify the roleand it reflects on all developers immediately.
+  
+  - Role-based access controls provide a more standard approachto managing access within the Kubernetes cluster.We will look at role-based access controlsin much more detail in the next lecture.For now, let's proceedwith the other authorization mechanisms.
+
+- Webhook
+  - Say you want to manage authorization externallyand not through the built-in mechanismsthat we just discussed.For instance, Open Policy Agent is a third-party toolthat helps with admission control and authorization.You can have Kubernetes make an API callto the Open Policy Agent with the informationabout the user and his access requirements,and have the Open Policy Agent decideif the user should be permitted or not.Based on that response, the user is granted access.
+
+- Now, there are two more modes in addition to what we just saw.
+- Always Allow and Always Deny.
+  - As the name states, Always Allow, allows all requests without performing any authorization checks. Always Deny, denies all requests. So, where do you configure these modes? Which of them are active by default? Can you have more than one at a time? How does authorization work if you do have multiple ones configured? The modes are set using the Authorization Mode Option on the Kube API Server. If you don't specify this option, it is set to Always Allow by default. You may provide a comma separated list of multiple modes that you wish to use. In this case, I wanna set it to node-rbac and webhook. When you have multiple modes configured your request is authorized using each one in the order it is specified. For example, when a user sends a request it's first handled by the Node Authorizer. The Node Authorizer handles only node requests,so it denies the request. Whenever a module denies a request it is forwarded to the next one in the chain. The role-based access control module performs its checks and grants the user permission.Authorization is complete and user is given access to the requested object. So, every time a module denies the request it goes to the next one in the chain and as soon as a module approves the request no more checks are done and the user is granted permission.
+
+## 161. Role Based Access Controls
+
+- So how do we create a role?
+
+- We do that by creating a role object.So, we create a role definition filewith the API version setto our back.authorization.K.IU/V1and kind said to role, we name the role developeras we are creating this role for developers,and then we specify rules.Each rule has three sections:API groups, resources, and works.The same things that we talkedabout in one of the previous lectures.For Core group you can leave the API group section as blank.For any other group, you specify the group name.The resources that we want togive developers access to are pods.
+
+- The actions that they can takeare list, get, create, and delete.Similarly, to allow the developers to create conflict maps,we add another rule to create config map.You can add multiple rules for a single role like this.Create the role using the cube control create roll command.The next step is to link the user to that role.For this, we create another object called roll binding.The roll binding object links a user object to a role.
+
+- We will name it dev user to Developer Binding.The kind is role binding.It has two sections.The subjects is where we specify the user details.The roll ref section is where we provide the detailsof the roll we created.Create the role binding using thecube control create command.Also note that the rolesand role bindings fall under the scope of name spaces.So here the dev user gets accessto pot and convict maps within the default name space.
+
+- If you want to limit the dev user's accesswithin a different name spacethen specify the name space within the metadataof the definition file while creating them.To view the created roles,run the cube control get rolls command.To list role bindings, run the cube control,get roll bindings command.To view more details about the role, run the cube controldescribe role developer command.Here you see the details about the resources and permissionsfor each resource.Similarly, to view details about rule bindingsrun the cube control, describe rolled bindings command.Here you can see details about an existing role binding.
+
+- What if you being a user would like to seeif you have access to a particular resource in the cluster?
+
+- You can use the Q control oath can I command,and check if you can say, create deployments,or say delete notes.If you're an administrator, then you can evenimpersonate another user to check their permission.For instance, say you were tasked to create necessary setof permissions for a user to performa set of operations, and you did that,but you would like to test if what you did is working.You don't have to authenticate as the user to test it.Instead, you can use the same commandwith the AS user option like this.
+
+- Since we did not grant the developer permissionsto create deployments, it returns no.The dev user has access to creating pods though.You can also specify the name space in the commandlike this, the dev user does not have permission tocreate a pod in the test name space.Well, a quick note on resource names.We just saw how you can provide accessto users for resources like pods within the name space.You can go one level downand allow access to specific resources alone.
+
+- For example, say you have five parts in namespaceyou wanna give access to a user to pods, but not all pods.You can restrict access to the blue and orange pod aloneby adding a resource names field to the rule.
+
+## 164. Cluster Roles and Role Bindings
+
+- 
