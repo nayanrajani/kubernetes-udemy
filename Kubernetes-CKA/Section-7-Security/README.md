@@ -236,4 +236,66 @@
 
 ## 164. Cluster Roles and Role Bindings
 
+- When we talked about roles and role bindings, we said that roles and role bindings are namespaced, meaning they are created within namespaces. If you don't specify a namespace, they are created in the default namespace and control access within that namespace alone.
+
+- Can you group or isolate nodes within a namespace?
+
+- Like can you say node 01 is part of the dev namespace? 
+
+- No, those are cluster-wide or cluster-scoped resources. They cannot be associated to any particular namespace. So the resources are categorized as either namespaced or cluster-scoped.
+
+- To see a full list of namespaced and non-namespaced resources, run the kubectl API resources command with the namespaced option set.
+
+- Cluster roles are just like roles, except they are for cluster-scoped resources.For example, a cluster admin role can be createdto provide a cluster administratorpermissions to view, create, or delete nodes in a cluster.Similarly, a storage administrator rolecan be created to authorize a storage adminto create persistent volumes and claims.Create a cluster role definition filewith the kind cluster roleand specify the rules as we did before.
+
+- In this case, the resources are nodes,then create the cluster role.The next step is to link the user to that cluster role.For this, we create another object  called cluster role binding.  The role binding object links the user to the role.  We will name it Cluster Admin Role Binding.  The kind is cluster role binding.  Under subjects, we specify the user details,  cluster admin user in this case.  The role ref section is where we provide the details  of the cluster role we created.
+
+- Create the role binding using the kubectl create command.  One thing to note before I let you go.  We said that cluster roles and binding  are used for cluster-scoped resources,  but that is not a hard rule.  You can create a cluster role  for namespaced resources as well.  When you do that,  the user will have access to these resources  across all namespaces.
+
+- Earlier, when we created a role  to authorize a user to access pod,  the user had access to pods in a particular namespace alone.  With cluster roles,  when you authorize a user to access the pods,  the user gets access to all pods across the cluster.  Kubernetes creates a number of cluster roles by default  when the cluster is first set up.
+
+- Cluster are part of namespace?
+  - no cluster role are cluster wide and not part of any namespace.
+
+## 167. Service Accounts
+
+- The concept of service accounts is linked  to other security related concepts in Kubernetes,  such as authentication, authorization,  role-based access controls, et cetera.  However, as part of the Kubernetes  for the application developers exam curriculum,  you only need to know how to work with service accounts.
+
+- We have detailed sections covering the other concepts  and security in the Kubernetes administrators course.  So there are two types of accounts in Kubernetes:  a user account and a service account.  As you might already know,  the user account is used by humans,  and service accounts are used by machines.  A user account could be  for an administrator accessing the cluster  to perform administrative tasks,  or a developer accessing the cluster  to deploy applications, et cetera.
+
+- A service account could be an account used  by an application to interact with a Kubernetes cluster.  For example, a monitoring application  like Prometheus uses a service account  to pull the Kubernetes API for performance metrics.  An automated build tool like Jenkins  uses service accounts to deploy applications  on the Kubernetes cluster.
+
+- But what if your third-party application  is hosted on the Kubernetes cluster itself?  For example,  we can have our custom Kubernetes dashboard application  or the Prometheus application  deployed on the Kubernetes cluster itself.
+
+- In that case, this whole process  of exporting the service account token  and configuring the third-party application to use it  can be made simple by automatically mounting  the service token secret as a volume  inside the pod hosting the third-party application.
+
+- That way, the token to access the Kubernetes API  is already placed inside the pod  and can be easily read by the application.  You don't have to provide it manually.
+
+- For every name space in Kubernetes, a service account named default is automatically created. Each namespace has its own default service account.
+
+- Whenever a pod is created, the default service account and its token are automatically mounted to that pod as a volume mount.
+
+- Now, remember that the default service account  is very much restricted.  It only has permission to run basic Kubernetes API queries.  If you'd like to use a different service account  such as the one we just created,  modify the pod definition file  to include a service account field,  and specify the name of the new service account.  Remember, you cannot edit the service account  of an existing pod.
+
+- You must delete and recreate the pod.  However, in case of a deployment,  you will be able to edit the service account  as any changes to the pod definition file  will automatically trigger a new rollout for the deployment.  So the deployment will take care  of deleting and recreating new pods  with the right service account.
+
+- When you look at the pod details now,  you see that the new service account is being used.  So remember,  Kubernetes automatically mounts the default service account  if you haven't explicitly specified any.  You may choose not to mount a service account automatically  by setting the automountServiceAccountToken field  to false in the pod's back section.
+
+- The token were used inside the file was for unlimited time period (never expire) which created a mess for developers and may be it is a security breach.
+
+- So tokens generated  by the TokenRequestAPI are audience bound,  they're time bound and object bound,  and hence are more secure.  Now since version 1.22, when a new pod is created,  it no longer relies on the service account secret token  that we just saw.  Instead, a token with a defined lifetime is generated  through the TokenRequestAPI  by the service account admission controller  when the pod is created.  And this token is then mounted  as a projected volume into the pod.  So in the past, if you look at this space here,  you'd see the secret that's part  of the service account mount as a secret object.  But now as you can see,  it's a projected volume that actually communicates  with the token controller API, TokenRequestAPI, 
+and it gets a token for the pod.
+
+- Now, with version 1.24,  another enhancement was made  as part of the Kubernetes enhancement proposal 2799,  which dealt with the reduction  of secret-based service account tokens.  So in the past when a service account was created,  it automatically created a secret  with a token that has no expiry  and is not bound to any audience.  This was then automatically mount as a volume  to any pod that uses that service account.  And that's what we just saw.  But in version 1.22 that was changed,  the automatic mounting of the secret object  to the pod was changed,  and instead it then moved to the token request API.
+
+- So with version 1.24, a change was made  where when you create a service account,  it no longer automatically creates a secret  or a token access secret.  So you must run the command kubectl create token  followed by the name of the service account  to generate a token for that service account  if you needed one.  And it will then print that token on screen.  Now, if you copy that token,  and then if you try to decode this token,  this time you'll see that it has an expiry date defined.  And if you haven't specified any time limit,  then it's usually one hour  from the time that you ran the command.  You can also pass in additional options  to the command to increase the expiry of the token.
+
+- So now post version 1.24, if you would still like  to create secrets the old way with non expiring token,  then you could still do that by creating a secret object  with the type set to kubernetes.io/service-account-token,  and the name of the service account specified  within annotations in the metadata section like this.  So this is how the secret object will be  associated with that particular service account.  So when you do this, just make sure  that you have the service account created first,  and then create a secret object.  Otherwise, the secret object will not be created.
+
+- So this will create a non expiring token  in a secret object and associated with that service account.  Now, you have to be sure if you really wanna do that  because as for the Kubernetes documentation pages  on service account token secrets,  it says you should only create service account token secrets  if you can't use the TokenRequest API to obtain a token.  So that's either the kubectl create token command  we just talked about,  or it talks to the TokenRequest API to generate that token,  or it's the automated token creation that happens on pods  when they're created post version 1.22.
+
+- And also,  you should only create service account token request  if the security exposure of persisting  a non expiring token credential is acceptable to you.  Now, the TokenRequest API is recommended  instead of using the service account token secret objects  as they are more secure and have a bounded lifetime,  unlike the service account secrets that have no expiry.
+
+## 170. Image Security
+
 - 
