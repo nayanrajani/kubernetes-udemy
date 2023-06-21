@@ -298,4 +298,85 @@ and it gets a token for the pod.
 
 ## 170. Image Security
 
-- 
+- The name is Nginx but what is this image and where is this image pulled from?This name follows Docker's image naming convention.Nginx here is the image or the repository name.When you say Nginx, it's actually library slash Nginx.The first part stands for the user or the account name.So, if you don't provide a user or account name,it assumes it to be library.
+
+- Library is the name of the default accountwhere Docker's official images are stored.These images promote best practices and are maintainedby a dedicated team who are responsiblefor reviewing and publishing these official images.Now, if you were to create your own accountand create your own repositories or images under it,then you would use a similar pattern.So instead of library,it would be your name or your company's name.
+
+- Now, where are these images stored and pulled from?Since we have not specified the locationwhere these images are to be pulled from,it is assumed to be Docker's default registry, Docker hub.The DNS name for which is docker.io.The registry is where all the images are stored.Whenever you create a new image or update an image,you push it to the registryand every time anyone deploys this application,it is pulled from the registry.There are many other popular registries as well.Google's registry is at gcr.io,where a lot of Kubernetes related images are stored,like the ones usedfor performing end-to-end tests on the cluster.
+
+- These are all publicly accessible imagesthat anyone can download and access.When you have applications built in-housethat shouldn't be made available to the public,hosting an internal private registry may be a good solution.Many cloud service providers, such as AWS, Azure or GCP,provide a private registry by default.On any of these solutions, be it on Docker hubor Google's registry or your internal private registry,you may choose to make a repository privateso that it can be accessed using a set of credentials.From Docker's perspective,to run a container using a private image,you first log into your private registryusing the Docker login command.
+
+- Input your credentials.Once successful, run the application using the imagefrom the private registry.Going back to our pod definition file,to use an image from our private registry,we replace the image name with the full path tothe one in the private registry.But how do we implement the authentication, the login part?How does Kubernetes get the credentialsto access the private registry?Within Kubernetes, we know that the images are pulledand run by the Docker run time on the worker nodes.How do you pass the credentials tothe docker run times on the worker nodes?For that, we first create a secret objectwith the credentials in it.
+
+- The secret is of type docker registryand we name it regcred.Docker registry is a built in secret type that was builtfor storing Docker credentials.We then specify the registry server name,the username to access the registry, the password,and the email address of the user.We then specify the secret inside our pod definition fileunder the image pull secret section.When the pod is created, Kubernetes or the kubeletson the worker node uses the credentialsfrom the secret to pull images.
+
+## 173. Pre-requisite - Security in Docker
+
+- What happens when you run containers as the root user?
+
+- Is the root user within the container the same as the root user on the host?
+
+- Can the process inside the container do anything that the root user can do on the system?
+
+- If so, isn't that dangerous?
+
+- Well, Docker implements a set of security features that limits the abilities of the root user within the container.
+
+- So the root user within the container isn't really like the root user on the host. Docker uses Linux capabilities to implement this. As we all know, the root user is the most powerful user on a system. The root user can literally do anything, and so does a process run by the root user. It has unrestricted access to the system, from modifying files and permissions on files, access control, creating or killing processes, setting group ID or user ID, performing network-related operations, such as binding two network ports, broadcasting on a network, controlling network ports, system-related operations, like rebooting the host, manipulating system clock, and many more.
+
+- All of these are the different capabilities on a Linux system and you can see a full list at this location. You can now control and limit what capabilities are made available to a user. By default, Docker runs a container with a limited set of capabilities. And so the processes running within the container do not have the privileges to say reboot the host or perform operations that can disrupt the host or other containers running on the same host. If you wish to override this behavior and provide additional privileges than what is available, use the cap add option in the Docker run command.
+
+- Similarly, you can drop privileges as well using the cap drop option. Or in case you wish to run the container with all privileges enabled, use the privileged flag.
+
+## 174. Security Contexts
+
+- As you know already, in Kubernetes, containers are encapsulated in Pods You may choose to configure the security settings at a container level or at a Pod level. If you configure it at a Pod level, the settings will carry over to all the containers within the Pod. If you configure it at both the Pod and the container, the settings on the container will override the settings on the Pod. 
+
+- Let us start with a Pod definition file. This pod runs an ubuntu image with the sleep command. To configure security context on the container, add a field called security context under the spec section of the Pod.
+
+- Use the run as user option to set the user ID for the Pod. To set the same configuration on the container level, move the whole section under the container specification like this. To add capabilities, use the capabilities option, and specify a list of capabilities to add to the Pod.
+
+## 177. Network Policy
+
+- Let us now look at network security in Kubernetes. So we have a cluster with a set of nodes hosting a set of pods and services. Each node has an IP address and so does each pod as well as service. One of the prerequisite for networking in Kubernetes is whatever solution you implement, the pods should be able to communicate with each other without having to configure any additional settings like routes.
+
+- For example, in this network solution, all pods are on a virtual private network that spans across the node in the Kubernetes cluster and they can all by default reach each other using the IPs or pod names or services configured for that purpose. Kubernetes is configured by default with an all allow rule that allows traffic from any pod to any other pod or services within the cluster.
+
+- For each component in the application, we deploy a pod. One for the front end web server, for the API server and one for the database. We create services to enable communication between the as well as to the end user.
+
+-Based on what we discussed in the previous slide, by default, all the three podscan communicate with each otherwithin the Kubernetes cluster.What if we do not want the front end web serverto be able to communicate with the database server directly?
+
+- Say, for example, your security teams and auditsrequire you to prevent that from happening.That is where you would implement a network policyto allow traffic to the DB server only from the API server.And network policy is another objectin the Kubernetes namespace just like pods, replica setsor services, you link a network policy to one or more pods.You can define rules within the network policy.In this case, I would say only allow ingress trafficfrom the API pod on port 3306.Once this policy is created,it blocks all other traffic to the podand only allows traffic that matches the specified rule.
+
+- Again, this is only applicable to the podon which the network policy is applied.So how do you apply or link a network policy to a pod?We use the same technique that was used beforeto link replica sets or services to pod,labels and selectors.We label the pod and use the same labelson the port selector field in the network policyand then we build our rule.
+
+- Under policy types, specify whether the ruleis to allow ingress or egress traffic or both.In our case, we only want to allow ingress trafficto the DB pod, so we add ingress.Next, we specify the ingress rule.That allows traffic from the API podand you specify the API podagain using labels and selectors.And finally, the port to allow traffic on, which is 3306.
+
+- Let us put all that together.
+
+- We start with a blank object definition file, and as usual, we have API version, kind, metadata and spec. The API version is networking.kh.io/v1.The kind is network policy,we will name the policy DB-policyand then under the spec section,we will first move the pod selectorto apply this policy to the DB pod.Then we will move the rule we created in the previous slideunder it, and that's it.We have our first network policy ready.
+
+- Now note that ingress or egress isolationonly comes into effect if you have ingressor egress in the policy types.In this example, there's only ingress in the policy typewhich means only ingress traffic is isolatedand all egress traffic is unaffected.Meaning the pod is able to make any egress callsand they're not blocked.So for an egress or ingress isolation to take place,note that you have to add themunder the policy types as seen here.Otherwise, there is no isolation.
+
+- Run the cube control create command to create the policy.Remember that network policiesare enforced by the network solution implementedon Kubernetes clusterand not all network solutions support network policies.A few of them that are supported are Cube Router,Calico, Romana, and WaveNet.If you used Flannel as the networking solution,it does not support network policies as of this recording.Always referred to the Network Solutions Documentationto see support for network policies.
+
+- Also, remember, even in a cluster configured with a solutionthat does not support network policies,you can still create the policiesbut they will just not be enforced.You will not get an error messagesaying the network solutiondoes not support network policies.
+
+## 178. Developing network policies
+
+- There can be two type of policy that we can create
+  - Ingress [from:]
+    - In Ingress we can define 3 types of selector
+      - PodSelector
+        - by matching the Labeles we can define to have a ingress traffic
+        - NamespaceSlector
+          - By defining namespace selector inside the PodSelector, it will only allow the Pods from different namespace with the matching labels only.
+      - NamespaceSelector
+        - by providing the namespace selector we are defining all the pods can communicate within or from namespace we have define
+
+      - ipBlock
+        - With ipBlock we can define from which Externl Ip our POD can communicate with
+  - Egress [to:]
+    - let's take example of External Ip again
+      - we want our pod to send a backup copy to this external Ip, then we can add a Ip and on which port it should send the backup copy.
+
