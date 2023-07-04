@@ -27,7 +27,7 @@
 
 - This course focuses on topics relevant for a developer such as ConfigMaps,secrets and service accounts,multi container pods, readiness and liveness probes, logging and monitoring, jobs, services, and networking.
 
-## Kubernetes Setup (under newly created ubuntu VM ONLY)
+## Kubernetes Setup (under newly created ubuntu VM ONLY) with CRI-Dockerd
 
 - Master node
 
@@ -58,6 +58,15 @@
   - https://www.youtube.com/watch?v=uUupRagM7m0&list=PL2We04F3Y_41jYdadX55fdJplDvgNGENo
 
 - The GIT Repo for this tutorial can be found here: https://github.com/mmumshad/kubernetes-the-hard-way
+
+
+### Kubeadm way
+
+- The vagrant file used in the next video is available here:
+  - https://github.com/kodekloudhub/certified-kubernetes-administrator-course
+
+- Here's the link to the documentation:
+  - https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 
 ### Shortform
 
