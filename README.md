@@ -68,6 +68,21 @@
 - Here's the link to the documentation:
   - https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 
+- pre-requisite
+  - Virtual Box
+  - Vagrant
+  - clone this repo
+
+- Steps:
+  - go inside that repo folder after cloning
+  - vi Vagrantfile
+    - check
+  - vagrant status
+    - check the status of VMs
+  - vagrant up
+    - it will take time.
+  
+
 ### Shortform
 
 - Deployment => deploy
